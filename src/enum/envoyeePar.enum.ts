@@ -1,0 +1,3 @@
+enum envoyeePar {
+    'ONE', 'TWO',
+}
