@@ -17,8 +17,15 @@ export class PlanchesService {
     async getPlanche(_id: number): Promise<Planche[]> {
         return await this.planchesRepository.find({
             relations: ['histoire'],
-            select: ['histoire', 'lienDessin', 'text', 'idCreateur'],
+            select: ['histoire', 'lienDessin', 'text'],
             where: [{ id: _id }],
+        });
+    }
+    async getPlancheByHistoire(_id: number): Promise<Planche[]> {
+        return await this.planchesRepository.find({
+            relations: ['histoire'],
+            select: ['histoire', 'lienDessin', 'text'],
+            where: [{ histoire: _id }],
         });
     }
     async createPlanche(planche: Planche) {

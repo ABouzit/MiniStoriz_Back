@@ -1,12 +1,13 @@
 import { User } from 'src/users/user.entity';
-import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, JoinTable } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, JoinTable, ManyToOne } from 'typeorm';
 @Entity()
 export class Histoire {
     @PrimaryGeneratedColumn('uuid')
     id: number;
-    @ManyToMany(type => User)
-    @JoinTable({ name: 'user_histoire' })
-    users: User[];
+    @ManyToOne(type => User)
+    userText: User;
+    @ManyToOne(type => User)
+    userDessin: User;
     @Column({ type: 'int', nullable: true })
     noteDessinMoy: number;
     @Column({type: 'int', nullable: true})

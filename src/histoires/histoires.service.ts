@@ -11,13 +11,16 @@ export class HistoiresService {
     ) { }
 
     async getHistoires(): Promise<Histoire[]> {
-        return await this.histoiresRepository.find({relations: ['users']});
+        return await this.histoiresRepository.find({
+            relations: ['userText', 'userDessin']});
     }
-
+    async getNumberOfHistoires(number: number): Promise<Histoire[]> {
+        return await this.histoiresRepository.find({ relations: ['userText', 'userDessin'], take: number });
+    }
     async getHistoire(_id: number): Promise<Histoire[]> {
         return await this.histoiresRepository.find({
-            relations: ['users'],
-            select: ['users', 'noteDessinMoy', 'noteHistoireMoy', 'nombreVue', 'titreHistoire', 'lienIllustration'],
+            relations: ['userText', 'userDessin'],
+            select: ['userText', 'userDessin', 'noteDessinMoy', 'noteHistoireMoy', 'nombreVue', 'titreHistoire', 'lienIllustration'],
             where: [{ id: _id }],
         });
     }

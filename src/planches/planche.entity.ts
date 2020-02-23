@@ -13,6 +13,4 @@ export class Planche {
     text: string;
     @Column({ default: false })
     isActive: boolean;
-    @Column({ length: 100, nullable: true })
-    idCreateur: string;
 }

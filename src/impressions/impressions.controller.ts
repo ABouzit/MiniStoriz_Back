@@ -23,7 +23,7 @@ export class ImpressionsController {
     async create(@Body() impression: Impression, @Res() res) {
         const newImpression = await this.service.createImpression(impression);
         return res.status(HttpStatus.OK).json({
-            message: 'L\'utilisateur a ete cree avec succes!',
+            message: 'L\'impression a ete cree avec succes!',
             post: newImpression,
         });
     }

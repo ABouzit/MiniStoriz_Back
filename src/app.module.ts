@@ -13,6 +13,7 @@ import { PlanchesModule } from './planches/planches.module';
 import { Histoire } from './histoires/histoire.entity';
 import { Planche } from './planches/planche.entity';
 import { Impression } from './impressions/impression.entity';
+import { TelechargementController } from './telechargementDesFichiers/telechargement.Controller';
 
 @Module({
   imports: [TypeOrmModule.forRoot(
@@ -28,6 +29,6 @@ import { Impression } from './impressions/impression.entity';
       logging: true,
     },
   ), UsersModule, RelationsModule, MessagesModule, HistoiresModule, ImpressionsModule, PlanchesModule],
-
- })
+  controllers: [TelechargementController],
+})
 export class AppModule {}

@@ -15,6 +15,16 @@ export class PlanchesController {
         }
         return res.status(HttpStatus.OK).json(planche);
     }
+    @Get('histoire/:id')
+    async getByHistoire(@Res() res, @Param() params) {
+        const planche = await this.service.getPlancheByHistoire(params.id);
+        // tslint:disable-next-line: no-trailing-whitespace
+        
+        if (!planche) {
+            throw new NotFoundException('Les planches n\'existe pas!');
+        }
+        return res.status(HttpStatus.OK).json(planche);
+    }
     @Get()
     async getAll(@Res() res) {
         const planches = await this.service.getPlanches();

@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin';
 import 'firebase/auth';
 import 'firebase/firestore';
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   const firebaseConfig = {
      apiKey: 'AIzaSyAMxYL804MZ93kG1Frc-rl0x1w9KHpAijE',
      authDomain: 'ministoriz.firebaseapp.com',
@@ -21,7 +21,7 @@ async function bootstrap() {
      credential: admin.credential.applicationDefault(),
      databaseURL: 'https://ministorizdb.firebaseio.com',
    });
-  await app.listen(3000);
+  await app.listen(5600);
 
 }
 bootstrap();

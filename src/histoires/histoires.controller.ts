@@ -18,8 +18,14 @@ export class HistoiresController {
         const histoires = await this.service.getHistoires();
         return res.status(HttpStatus.OK).json(histoires);
     }
+    @Get('/take/:number')
+    async getNumber(@Res() res, @Param() params) {
+        const histoires = await this.service.getNumberOfHistoires(params.number);
+        return res.status(HttpStatus.OK).json(histoires);
+    }
     @Post()
     async create(@Body() histoire: Histoire, @Res() res) {
+        
         const newHistoire = await this.service.createHistoire(histoire);
         return res.status(HttpStatus.OK).json({
             message: 'L\'histoire a ete cree avec succes!',
