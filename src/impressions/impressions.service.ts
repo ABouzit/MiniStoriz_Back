@@ -21,6 +21,13 @@ export class ImpressionsService {
             where: [{ id: _id }],
         });
     }
+    async getImpressionsHistoire(_id: number): Promise<Impression[]> {
+        return await this.impressionsRepository.find({
+            relations: ['histoire'],
+            select: ['commentaire', 'noteHistoire', 'noteDessin'],
+            where: [{ histoire: _id }],
+        });
+    }
     async createImpression(impression: Impression) {
         this.impressionsRepository.save(impression);
     }

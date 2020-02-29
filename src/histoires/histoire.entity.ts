@@ -3,7 +3,7 @@ import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, JoinTable, ManyToOn
 @Entity()
 export class Histoire {
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id: string;
     @ManyToOne(type => User)
     userText: User;
     @ManyToOne(type => User)
@@ -18,5 +18,6 @@ export class Histoire {
     titreHistoire: string;
     @Column({ length: 200, nullable: true })
     lienIllustration: string;
-
+    @Column({ type: 'datetime', nullable: true })
+    dateDeCreation: Date;
 }

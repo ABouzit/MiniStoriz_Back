@@ -26,6 +26,7 @@ export class PlanchesService {
             relations: ['histoire'],
             select: ['histoire', 'lienDessin', 'text'],
             where: [{ histoire: _id }],
+            order: {index: "ASC"}
         });
     }
     async createPlanche(planche: Planche) {

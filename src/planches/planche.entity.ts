@@ -11,6 +11,8 @@ export class Planche {
     lienDessin: string;
     @Column({ length: 1000, nullable: true })
     text: string;
+    @Column()
+    index: number;
     @Column({ default: false })
     isActive: boolean;
 }

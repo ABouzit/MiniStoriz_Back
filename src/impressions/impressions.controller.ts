@@ -4,7 +4,7 @@ import { Impression } from './impression.entity';
 
 @Controller('impressions')
 export class ImpressionsController {
-    constructor(private service: ImpressionsService) { }
+    constructor(private service: ImpressionsService) {  }
 
     @Get(':id')
     async get(@Res() res, @Param() params) {
@@ -17,6 +17,11 @@ export class ImpressionsController {
     @Get()
     async getAll(@Res() res) {
         const impressions = await this.service.getImpressions();
+        return res.status(HttpStatus.OK).json(impressions);
+    }
+    @Get('/histoire/:id')
+    async getAllImpHistoire(@Res() res, @Param() params) {
+        const impressions = await this.service.getImpressionsHistoire(params.id);
         return res.status(HttpStatus.OK).json(impressions);
     }
     @Post()

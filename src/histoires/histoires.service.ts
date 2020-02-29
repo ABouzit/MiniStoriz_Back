@@ -14,8 +14,29 @@ export class HistoiresService {
         return await this.histoiresRepository.find({
             relations: ['userText', 'userDessin']});
     }
+    async getHistoiresByNbrVue(): Promise<Histoire[]> {
+        return await this.histoiresRepository.find({
+            relations: ['userText', 'userDessin'],
+             order: {nombreVue: "DESC"}, take: 3 });
+    }
+    async getHistoiresByPopulaire(): Promise<Histoire[]> {
+        return await this.histoiresRepository.find({
+            relations: ['userText', 'userDessin'],
+            
+             order: {noteHistoireMoy: "DESC", noteDessinMoy: "DESC"}, take: 3 });
+    }
+    async getHistoiresPlusRecent(): Promise<Histoire[]> {
+        return await this.histoiresRepository.find({
+            relations: ['userText', 'userDessin'],
+             order: {dateDeCreation: "DESC"}, take: 3 });
+    }
+    async getHistoiresPlusAncien(): Promise<Histoire[]> {
+        return await this.histoiresRepository.find({
+            relations: ['userText', 'userDessin'],
+             order: {dateDeCreation: "ASC"}, take: 3 });
+    }
     async getNumberOfHistoires(number: number): Promise<Histoire[]> {
-        return await this.histoiresRepository.find({ relations: ['userText', 'userDessin'], take: number });
+        return await this.histoiresRepository.find({ relations: ['userText', 'userDessin'], take: number,order: {dateDeCreation: "DESC"} });
     }
     async getHistoire(_id: number): Promise<Histoire[]> {
         return await this.histoiresRepository.find({
@@ -25,9 +46,12 @@ export class HistoiresService {
         });
     }
     async createHistoire(user: Histoire) {
-        this.histoiresRepository.save(user);
+      const histoire = user;
+      histoire.dateDeCreation = new Date();
+      return  this.histoiresRepository.save(histoire);
     }
     async updateHistoire(user: Histoire) {
+        console.log(user);
         this.histoiresRepository.save(user);
     }
 

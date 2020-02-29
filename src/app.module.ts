@@ -14,6 +14,8 @@ import { Histoire } from './histoires/histoire.entity';
 import { Planche } from './planches/planche.entity';
 import { Impression } from './impressions/impression.entity';
 import { TelechargementController } from './telechargementDesFichiers/telechargement.Controller';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [TypeOrmModule.forRoot(
@@ -29,6 +31,7 @@ import { TelechargementController } from './telechargementDesFichiers/telecharge
       logging: true,
     },
   ), UsersModule, RelationsModule, MessagesModule, HistoiresModule, ImpressionsModule, PlanchesModule],
-  controllers: [TelechargementController],
+  providers: [AppService],
+  controllers: [TelechargementController,AppController],
 })
 export class AppModule {}
