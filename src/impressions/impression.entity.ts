@@ -9,9 +9,9 @@ export class Impression {
     histoire: Histoire;
     @Column({ length: 1000, nullable: true })
     commentaire: string;
-    @Column({ type: 'int', nullable: true   })
+    @Column({ type: 'float', nullable: true   })
     noteHistoire: number;
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'float', nullable: true })
     noteDessin: number;
     @Column({ default: false })
     isActive: boolean;

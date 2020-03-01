@@ -8,9 +8,9 @@ export class Histoire {
     userText: User;
     @ManyToOne(type => User)
     userDessin: User;
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'float', nullable: true })
     noteDessinMoy: number;
-    @Column({type: 'int', nullable: true})
+    @Column({type: 'float', nullable: true})
     noteHistoireMoy: number;
     @Column({ type: 'int', nullable: true })
     nombreVue: number;

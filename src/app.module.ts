@@ -32,6 +32,6 @@ import { AppService } from './app.service';
     },
   ), UsersModule, RelationsModule, MessagesModule, HistoiresModule, ImpressionsModule, PlanchesModule],
   providers: [AppService],
-  controllers: [TelechargementController,AppController],
+  controllers: [TelechargementController, AppController],
 })
 export class AppModule {}
