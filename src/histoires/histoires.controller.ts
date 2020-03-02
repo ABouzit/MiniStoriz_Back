@@ -38,6 +38,26 @@ export class HistoiresController {
         const histoires = await this.service.getHistoiresPlusAncien();
         return res.status(HttpStatus.OK).json(histoires);
     }
+    @Get('/nbrvues')
+    async getAllNbrVues(@Res() res) {
+        const histoires = await this.service.getHistoiresByNbrVues();
+        return res.status(HttpStatus.OK).json(histoires);
+    }
+    @Get('/populaires')
+    async getAllPopulaires(@Res() res) {
+        const histoires = await this.service.getHistoiresByPopulaires();
+        return res.status(HttpStatus.OK).json(histoires);
+    }
+    @Get('/plusrecents')
+    async getAllPlusRecents(@Res() res) {
+        const histoires = await this.service.getHistoiresPlusRecents();
+        return res.status(HttpStatus.OK).json(histoires);
+    }
+    @Get('/plusancients')
+    async getAllPlusAnciens(@Res() res) {
+        const histoires = await this.service.getHistoiresPlusAnciens();
+        return res.status(HttpStatus.OK).json(histoires);
+    }
     @Get('/take/:number')
     async getNumber(@Res() res, @Param() params) {
         const histoires = await this.service.getNumberOfHistoires(params.number);

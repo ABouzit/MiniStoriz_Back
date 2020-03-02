@@ -33,7 +33,27 @@ export class HistoiresService {
     async getHistoiresPlusAncien(): Promise<Histoire[]> {
         return await this.histoiresRepository.find({
             relations: ['userText', 'userDessin'],
-             order: {dateDeCreation: 'ASC'}, take: 3 });
+            order: {dateDeCreation: 'ASC'}, take: 3 });
+    }
+    async getHistoiresByNbrVues(): Promise<Histoire[]> {
+        return await this.histoiresRepository.find({
+            relations: ['userText', 'userDessin'],
+            order: {nombreVue: 'DESC'} });
+    }
+    async getHistoiresByPopulaires(): Promise<Histoire[]> {
+        return await this.histoiresRepository.find({
+            relations: ['userText', 'userDessin'],
+            order: {noteHistoireMoy: 'DESC', noteDessinMoy: 'DESC'} });
+    }
+    async getHistoiresPlusRecents(): Promise<Histoire[]> {
+        return await this.histoiresRepository.find({
+            relations: ['userText', 'userDessin'],
+            order: {dateDeCreation: 'DESC'} });
+    }
+    async getHistoiresPlusAnciens(): Promise<Histoire[]> {
+        return await this.histoiresRepository.find({
+            relations: ['userText', 'userDessin'],
+            order: {dateDeCreation: 'ASC'} });
     }
     async getNumberOfHistoires(number: number): Promise<Histoire[]> {
         return await this.histoiresRepository.find({ relations: ['userText', 'userDessin'], take: number, order: {dateDeCreation: 'DESC'} });
