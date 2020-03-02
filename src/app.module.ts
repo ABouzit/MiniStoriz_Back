@@ -24,7 +24,7 @@ import { AppService } from './app.service';
       host: '139.162.169.45',
       port: 3306,
       username: 'codesqu1_ministoriez',
-      password: '',
+      password: 'codesqu1_ministoriez',
       database: 'codesqu1_ministoriez',
       entities: [User, Relation, Message, Histoire, Planche, Impression],
       synchronize: true,
