@@ -10,9 +10,9 @@ export class Histoire {
     userDessin: User;
     @Column({ type: 'float', nullable: true })
     noteDessinMoy: number;
-    @Column({type: 'float', nullable: true})
+    @Column({ type: 'float', default: 0, nullable: true})
     noteHistoireMoy: number;
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'int', default: 0, nullable: true })
     nombreVue: number;
     @Column({ length: 30, nullable: true })
     titreHistoire: string;
