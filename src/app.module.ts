@@ -30,6 +30,12 @@ import { AppService } from './app.service';
       username: 'codesqu1_ministoriez',
       password: 'codesqu1_ministoriez',
       database: 'codesqu1_ministoriez',
+    //  host: '139.162.169.45',
+    //   port: 3306,
+    //  username: 'codesqu1_ministoriez',
+    //   password: 'codesqu1_ministoriez',
+    //   database: 'codesqu1_ministoriez',
+
       entities: [User, Relation, Message, Histoire, Planche, Impression],
       synchronize: true,
       logging: true,
@@ -45,5 +51,3 @@ import { AppService } from './app.service';
   controllers: [TelechargementController, AppController],
 })
 export class AppModule {}
-
-      
