@@ -49,21 +49,24 @@ export class ImpressionsService {
             };
         });
     }
-    async createImpression(impression: Impression) {
-
+    async createImpression(impression: Impression): Promise<Impression> {
+        let imp: Impression;
         const histoire = impression.histoire;
-        this.getHistoireNotes(impression.histoire.id).then((notes) => {
+        await this.getHistoireNotes(impression.histoire.id).then(async (notes) => {
             histoire.noteDessinMoy = (notes.noteMoyDessins + impression.noteDessin) / notes.index;
             histoire.noteHistoireMoy = (notes.noteMoyText + impression.noteHistoire) / notes.index;
             console.log(histoire);
-            this.histoiresService.updateHistoire(histoire);
-            this.impressionsRepository.save(impression);
+            console.log('timer');
+            await this.histoiresService.updateHistoire(histoire);
+            await this.impressionsRepository.save(impression).then(result => imp = result);
+
         });
+        return imp;
     }
     async updateImpression(impression: Impression) {
-        this.impressionsRepository.save(impression);
+       await this.impressionsRepository.save(impression);
     }
 
     async deleteImpression(impression: Impression) {
-        this.impressionsRepository.delete(impression);
+       await this.impressionsRepository.delete(impression);
     }}

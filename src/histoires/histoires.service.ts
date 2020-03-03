@@ -70,9 +70,9 @@ export class HistoiresService {
       histoire.dateDeCreation = new Date();
       return  this.histoiresRepository.save(histoire);
     }
-    async updateHistoire(user: Histoire) {
+    async updateHistoire(user: Histoire): Promise<Histoire> {
         console.log(user);
-        this.histoiresRepository.save(user);
+        return await this.histoiresRepository.save(user);
     }
 
     async deleteHistoire(user: Histoire) {
