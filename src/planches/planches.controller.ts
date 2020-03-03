@@ -26,8 +26,8 @@ export class PlanchesController {
         return res.status(HttpStatus.OK).json(planches);
     }
     @Post()
-    async create(@Body() planche: Planche, @Res() res) {
-        return await this.service.createPlanche(planche).get((newPlanche)=>{
+    create(@Body() planche: Planche, @Res() res) {
+        return this.service.createPlanche(planche).then((newPlanche) => {
             return res.status(HttpStatus.OK).json({
                 message: 'La planche a ete cree avec succes!',
                 post: newPlanche,
