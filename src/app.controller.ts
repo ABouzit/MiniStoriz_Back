@@ -5,7 +5,6 @@ import { Request } from 'express';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  
   @Get(':folder/:imgpath')
   seeUploadedFile(@Param('imgpath') image,@Param('folder') folder, @Res() res) {
     return res.sendFile(image, { root: './images/' + folder });
