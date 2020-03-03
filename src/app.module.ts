@@ -21,17 +21,23 @@ import { AppService } from './app.service';
     TypeOrmModule.forRoot({
       type: 'mysql',
 <<<<<<< HEAD
+<<<<<<< HEAD
       host: '139.162.169.45',
        port: 3306,
       username: 'codesqu1_ministoriez',
        password: 'codesqu1_ministoriez',
        database: 'codesqu1_ministoriez',
 =======
+=======
+>>>>>>> parent of 34b8f00... delete all
       host: 'localhost',
        port: 3306,
       username: 'root',
        password: '',
        database: 'MiniStorizDb',
+<<<<<<< HEAD
+>>>>>>> parent of 34b8f00... delete all
+=======
 >>>>>>> parent of 34b8f00... delete all
       entities: [User, Relation, Message, Histoire, Planche, Impression],
       synchronize: true,
@@ -50,7 +56,11 @@ import { AppService } from './app.service';
 export class AppModule {}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       
+=======
+      
+>>>>>>> parent of 34b8f00... delete all
 =======
       
 >>>>>>> parent of 34b8f00... delete all

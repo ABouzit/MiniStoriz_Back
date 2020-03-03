@@ -27,8 +27,13 @@ export class PlanchesController {
     }
     @Post()
 <<<<<<< HEAD
+<<<<<<< HEAD
     create(@Body() planche: Planche, @Res() res) {
         return this.service.createPlanche(planche).then((newPlanche) => {
+=======
+    async create(@Body() planche: Planche, @Res() res) {
+        return await this.service.createPlanche(planche).get((newPlanche)=>{
+>>>>>>> parent of 34b8f00... delete all
 =======
     async create(@Body() planche: Planche, @Res() res) {
         return await this.service.createPlanche(planche).get((newPlanche)=>{
