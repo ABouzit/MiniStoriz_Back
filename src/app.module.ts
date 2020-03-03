@@ -20,11 +20,11 @@ import { AppService } from './app.service';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '139.162.169.45',
+      host: '127.0.0.1',
        port: 3306,
-      username: 'codesqu1_ministoriez',
-       password: 'codesqu1_ministoriez',
-       database: 'codesqu1_ministoriez',
+      username: 'codemedi_ministoriez',
+       password: 'codemedi_ministoriez',
+       database: 'codemedi_ministoriez',
       entities: [User, Relation, Message, Histoire, Planche, Impression],
       synchronize: true,
       logging: true,
