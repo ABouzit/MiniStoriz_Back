@@ -71,7 +71,7 @@ export class HistoiresService {
       return  this.histoiresRepository.save(histoire);
     }
     async updateHistoire(user: Histoire): Promise<Histoire> {
-        console.log(user);
+        
         return await this.histoiresRepository.save(user);
     }
 

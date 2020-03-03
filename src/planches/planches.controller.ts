@@ -17,13 +17,8 @@ export class PlanchesController {
     }
     @Get('histoire/:id')
     async getByHistoire(@Res() res, @Param() params) {
-        const planche = await this.service.getPlancheByHistoire(params.id);
-        // tslint:disable-next-line: no-trailing-whitespace
-        
-        if (!planche) {
-            throw new NotFoundException('Les planches n\'existe pas!');
-        }
-        return res.status(HttpStatus.OK).json(planche);
+        return await this.service.getPlancheByHistoire(params.id).then((planche) => 
+        res.status(HttpStatus.OK).json(planche));
     }
     @Get()
     async getAll(@Res() res) {
@@ -32,10 +27,11 @@ export class PlanchesController {
     }
     @Post()
     async create(@Body() planche: Planche, @Res() res) {
-        const newPlanche = await this.service.createPlanche(planche);
-        return res.status(HttpStatus.OK).json({
-            message: 'La planche a ete cree avec succes!',
-            post: newPlanche,
+        return await this.service.createPlanche(planche).get((newPlanche)=>{
+            return res.status(HttpStatus.OK).json({
+                message: 'La planche a ete cree avec succes!',
+                post: newPlanche,
+            });
         });
     }
 

@@ -16,22 +16,29 @@ import { Impression } from './impressions/impression.entity';
 import { TelechargementController } from './telechargementDesFichiers/telechargement.Controller';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
 @Module({
-  imports: [TypeOrmModule.forRoot(
-    {
+  imports: [
+    TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '139.162.169.45',
-      port: 3306,
-      username: 'codesqu1_ministoriez',
-      password: 'codesqu1_ministoriez',
-      database: 'codesqu1_ministoriez',
+      host: 'localhost',
+       port: 3306,
+      username: 'root',
+       password: '',
+       database: 'MiniStorizDb',
       entities: [User, Relation, Message, Histoire, Planche, Impression],
       synchronize: true,
       logging: true,
-    },
-  ), UsersModule, RelationsModule, MessagesModule, HistoiresModule, ImpressionsModule, PlanchesModule],
+    }),
+    UsersModule,
+    RelationsModule,
+    MessagesModule,
+    HistoiresModule,
+    ImpressionsModule,
+    PlanchesModule,
+  ],
   providers: [AppService],
   controllers: [TelechargementController, AppController],
 })
 export class AppModule {}
+
+      

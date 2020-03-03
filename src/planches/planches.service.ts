@@ -30,7 +30,7 @@ export class PlanchesService {
         });
     }
     async createPlanche(planche: Planche) {
-        this.planchesRepository.save(planche);
+        return await this.planchesRepository.save(planche);
     }
     async updatePlanche(planche: Planche) {
         this.planchesRepository.save(planche);
