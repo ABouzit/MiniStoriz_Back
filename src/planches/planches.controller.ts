@@ -26,18 +26,8 @@ export class PlanchesController {
         return res.status(HttpStatus.OK).json(planches);
     }
     @Post()
-<<<<<<< HEAD
-<<<<<<< HEAD
     create(@Body() planche: Planche, @Res() res) {
         return this.service.createPlanche(planche).then((newPlanche) => {
-=======
-    async create(@Body() planche: Planche, @Res() res) {
-        return await this.service.createPlanche(planche).get((newPlanche)=>{
->>>>>>> parent of 34b8f00... delete all
-=======
-    async create(@Body() planche: Planche, @Res() res) {
-        return await this.service.createPlanche(planche).get((newPlanche)=>{
->>>>>>> parent of 34b8f00... delete all
             return res.status(HttpStatus.OK).json({
                 message: 'La planche a ete cree avec succes!',
                 post: newPlanche,
