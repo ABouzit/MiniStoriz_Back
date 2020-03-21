@@ -3,7 +3,8 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
-
+    @Column({ length: 200, nullable: true })
+    lienPhoto: string;
     @Column({ length: 25, nullable: true })
     prenom: string;
     @Column({ length: 25 })
@@ -20,9 +21,9 @@ export class User {
     nombreHistoire: number;
     @Column({ type: 'int', nullable: true })
     nombreDessin: number;
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'float', nullable: false, default: 0 })
     noteHistoire: number;
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'float', nullable: false, default: 0 })
     noteDessin: number;
     @Column({default: false})
     isActive: boolean;

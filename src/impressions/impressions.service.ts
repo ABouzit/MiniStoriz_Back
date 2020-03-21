@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HistoiresService } from 'src/histoires/histoires.service';
 import { LoggerService } from 'nest-logger';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class ImpressionsService {
@@ -11,6 +13,7 @@ export class ImpressionsService {
     @InjectRepository(Impression)
     private impressionsRepository: Repository<Impression>,
     private histoiresService: HistoiresService,
+    private usersService: UsersService,
   ) {}
   /* public logStuff() {
     this.logger.debug(
@@ -23,21 +26,21 @@ export class ImpressionsService {
       ImpressionsService.name,
     );
   }*/
-  async getImpressions(): Promise<Impression[]> {
-    return await this.impressionsRepository.find({ relations: ['histoire'] });
+  getImpressions(): Promise<Impression[]> {
+    return this.impressionsRepository.find({ relations: ['histoire','user'] });
   }
 
-  async getImpression(_id: number): Promise<Impression[]> {
-    return await this.impressionsRepository.find({
-      relations: ['histoire'],
-      select: ['histoire', 'commentaire', 'noteHistoire', 'noteDessin'],
+  getImpression(_id: number): Promise<Impression[]> {
+    return this.impressionsRepository.find({
+      relations: ['histoire','user'],
+      select: ['histoire', 'commentaire', 'noteHistoire', 'noteDessin','user'],
       where: [{ id: _id }],
     });
   }
-  async getImpressionsHistoire(_id: string): Promise<Impression[]> {
-    return await this.impressionsRepository.find({
-      relations: ['histoire'],
-      select: ['commentaire', 'noteHistoire', 'noteDessin'],
+  getImpressionsHistoire(_id: string): Promise<Impression[]> {
+    return this.impressionsRepository.find({
+      relations: ['histoire','user'],
+      select: ['commentaire', 'noteHistoire', 'noteDessin','user'],
       where: [{ histoire: _id }],
     });
   }
@@ -46,8 +49,8 @@ export class ImpressionsService {
     let _noteMoyDessins = 0;
     return this.impressionsRepository
       .find({
-        relations: ['histoire'],
-        select: ['commentaire', 'noteHistoire', 'noteDessin'],
+        relations: ['histoire','user'],
+        select: ['commentaire', 'noteHistoire', 'noteDessin','user'],
         where: [{ histoire: _id }],
       })
       .then(result => {
@@ -65,23 +68,72 @@ export class ImpressionsService {
   }
    createImpression(impression: Impression): Promise<Impression> {
     const histoire = impression.histoire;
+    let userText= new User();
+    let userDessin= new User();
     return this.getHistoireNotes(impression.histoire.id).then(notes => {
       histoire.noteDessinMoy =
         (notes.noteMoyDessins + impression.noteDessin) / notes.index;
       histoire.noteHistoireMoy =
         (notes.noteMoyText + impression.noteHistoire) / notes.index;
       return this.histoiresService.updateHistoire(histoire).then(() => {
-        return this.impressionsRepository.save(impression).then(result => {
-          return Promise.resolve(result);
-        });
+        if (impression.histoire.userDessin.id == impression.histoire.userText.id) {
+          return this.histoiresService.rateDessinByUser(impression.histoire.userDessin.id).then(res => {
+            // res.data.noteHistoireMoy
+            
+            userDessin = impression.histoire.userDessin
+                userDessin.noteDessin = res.noteDessinMoy
+                console.log(res.noteDessinMoy)
+            
+            return this.usersService.updateUser(userDessin).then(us1 => {
+              console.log(us1)
+              return this.histoiresService.rateTextByUser(us1.id).then(res => {
+                // res.data.noteHistoireMoy
+                userText = us1
+                userText.noteHistoire = res.noteHistoireMoy
+                console.log(res.noteHistoireMoy)
+                return this.usersService.updateUser(userText).then(us2=>{
+                  console.log(us2)
+                  return this.impressionsRepository.save(impression).then(result => {
+                    return Promise.resolve(result);
+                  });
+                });
+            });
+          });
+         });
+        } else {
+          return this.histoiresService.rateDessinByUser(impression.histoire.userDessin.id).then(res => {
+            // res.data.noteHistoireMoy
+            
+            userDessin = impression.histoire.userDessin
+                userDessin.noteDessin = res.noteDessinMoy
+                console.log(res.noteDessinMoy)
+            
+            return this.usersService.updateUser(userDessin).then(us1 => {
+              console.log(us1)
+              return this.histoiresService.rateTextByUser(impression.histoire.userText.id).then(res => {
+                // res.data.noteHistoireMoy
+                userText = impression.histoire.userText
+                userText.noteHistoire = res.noteHistoireMoy
+                console.log(res.noteHistoireMoy)
+                return this.usersService.updateUser(userText).then(us2=>{
+                  console.log(us2)
+                  return this.impressionsRepository.save(impression).then(result => {
+                    return Promise.resolve(result);
+                  });
+                });
+            });
+          });
+         });
+        }
+        
       });
     });
   }
-  async updateImpression(impression: Impression) {
-    await this.impressionsRepository.save(impression);
+  updateImpression(impression: Impression) {
+    this.impressionsRepository.save(impression);
   }
 
-  async deleteImpression(impression: Impression) {
-    await this.impressionsRepository.delete(impression);
+  deleteImpression(impression: Impression) {
+    this.impressionsRepository.delete(impression);
   }
 }

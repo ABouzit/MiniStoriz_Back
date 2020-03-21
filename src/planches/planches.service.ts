@@ -10,33 +10,33 @@ export class PlanchesService {
         private planchesRepository: Repository<Planche>,
     ) { }
 
-    async getPlanches(): Promise<Planche[]> {
-        return await this.planchesRepository.find({ relations: ['histoire'] });
+    getPlanches(): Promise<Planche[]> {
+        return this.planchesRepository.find({ relations: ['histoire'] });
     }
 
-    async getPlanche(_id: number): Promise<Planche[]> {
-        return await this.planchesRepository.find({
+    getPlanche(_id: number): Promise<Planche[]> {
+        return this.planchesRepository.find({
             relations: ['histoire'],
             select: ['histoire', 'lienDessin', 'text'],
             where: [{ id: _id }],
         });
     }
-    async getPlancheByHistoire(_id: number): Promise<Planche[]> {
-        return await this.planchesRepository.find({
+    getPlancheByHistoire(_id: number): Promise<Planche[]> {
+        return this.planchesRepository.find({
             relations: ['histoire'],
             select: ['histoire', 'lienDessin', 'text'],
             where: [{ histoire: _id }],
             order: {index: "ASC"}
         });
     }
-    async createPlanche(planche: Planche) {
-        return await this.planchesRepository.save(planche);
+    createPlanche(planche: Planche) {
+        return this.planchesRepository.save(planche);
     }
-    async updatePlanche(planche: Planche) {
+    updatePlanche(planche: Planche) {
         this.planchesRepository.save(planche);
     }
 
-    async deletePlanche(planche: Planche) {
+    deletePlanche(planche: Planche) {
         this.planchesRepository.delete(planche);
     }
 }

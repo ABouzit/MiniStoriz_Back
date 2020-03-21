@@ -28,8 +28,8 @@ export class UsersController {
   }
 
   @Put()
-  async update(@Body() user: User, @Res() res) {
-    const updatedUser = await this.service.updateUser(user);
+   update(@Body() user: User, @Res() res) {
+    const updatedUser = this.service.updateUser(user);
     return res.status(HttpStatus.OK).json({
       message: "L'utilisateur a ete mis a jour avec succes!",
       post: updatedUser,

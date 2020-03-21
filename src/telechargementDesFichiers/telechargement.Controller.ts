@@ -33,4 +33,19 @@ export class TelechargementController {
         filePath: file.path,
     });
 }
+@Post('photoProfile')
+@UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+    destination(req, file, cb) {
+        cb(null, 'images/photoProfile');
+    },
+    filename(req, file, cb) {
+        cb(null, 'photoProfile' + (Math.floor(Math.random() * 90000000) + 10000000) + file.originalname.substr(file.originalname.indexOf('.'), file.originalname.lenght));
+    }})}))
+    uploadPhotoProfilImg( @UploadedFile() file ) {
+        console.log(file);
+        return Promise.resolve({
+        filePath: file.path,
+    });
+}
 }

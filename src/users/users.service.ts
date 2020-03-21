@@ -1,7 +1,7 @@
 
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { User } from './user.entity';
 import firebase = require('firebase');
 import admin = require('firebase-admin');
@@ -17,13 +17,24 @@ export class UsersService {
     private firebaseService: FirebaseService,
   ) {}
 
-  async getUsers(): Promise<User[]> {
-    return await this.usersRepository.find();
+  getUsers(): Promise<User[]> {
+    return this.usersRepository.find();
   }
 
-  async getUser(_id: number): Promise<User[]> {
-    return await this.usersRepository.find({
+  getUsersSearch(search: string): Promise<string[]> {
+    let data = [];
+    return this.usersRepository.find({select: ['id'],where: { pseudo: Like('%'+search+'%') }}).then(result => {
+      
+      return Promise.all(result.map((row,index)=>{
+        data.push(row.id)
+      })).then(()=> {return data});
+    });
+  }
+
+  getUser(_id: number): Promise<User[]> {
+    return this.usersRepository.find({
       select: [
+        'id',
         'prenom',
         'nom',
         'pseudo',
@@ -42,8 +53,8 @@ export class UsersService {
       where: [{ id: _id }],
     });
   }
-  async getUserByEmail(_email: string): Promise<User[]> {
-    return await this.usersRepository.find({
+  getUserByEmail(_email: string): Promise<User[]> {
+    return this.usersRepository.find({
       select: [
         'id',
         'prenom',
@@ -64,7 +75,7 @@ export class UsersService {
       where: [{ email: _email }],
     });
   }
-   async createUser(user: User): Promise<User> {
+   createUser(user: User): Promise<User> {
     const us = this.usersRepository.save(user).catch(function(error) {
       throw new HttpException(
         error, HttpStatus.FORBIDDEN,
@@ -72,16 +83,16 @@ export class UsersService {
     });
     return us;
   }
-  async updateUser(user: User): Promise<User> {
-    const us = this.usersRepository.save(user).catch(function(error) {
+  updateUser(user: User): Promise<User> {
+    console.log(user)
+    return this.usersRepository.save(user).catch(function(error) {
       throw new HttpException(
         error, HttpStatus.FORBIDDEN,
       );
     });
-    return us;
   }
 
-  async deleteUser(user: User) {
+  deleteUser(user: User) {
     this.usersRepository.delete(user).catch(function(error) {
       throw new HttpException(
         error, HttpStatus.FORBIDDEN,

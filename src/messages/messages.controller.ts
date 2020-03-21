@@ -28,6 +28,14 @@ export class MessagesController {
         });
     }
 
+    @Post('contact')
+    async createContact(@Body() contact: any, @Res() res) {
+        const newMessage = await this.service.sendEmail(contact.nom,contact.objet,contact.email,contact.message);
+        return res.status(HttpStatus.OK).json({
+            message: 'L\'Email a ete cree avec succes!'
+        });
+    }
+
     @Put()
     async update(@Body() message: Message, @Res() res) {
         const updatedMessage = await this.service.updateMessage(message);
