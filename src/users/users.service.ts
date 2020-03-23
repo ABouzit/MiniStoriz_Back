@@ -49,6 +49,7 @@ export class UsersService {
         'role',
         'dateDeCreation',
         'dateDernierConnexion',
+        'lienPhoto',
       ],
       where: [{ id: _id }],
     });
@@ -71,6 +72,7 @@ export class UsersService {
         'role',
         'dateDeCreation',
         'dateDernierConnexion',
+        'lienPhoto',
       ],
       where: [{ email: _email }],
     });
