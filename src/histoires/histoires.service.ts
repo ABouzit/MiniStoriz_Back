@@ -180,8 +180,23 @@ export class HistoiresService {
     }
     createHistoire(user: Histoire) {
       const histoire = user;
+      let userText = histoire.userText;
+      let userDessin = histoire.userDessin;
+        
       histoire.dateDeCreation = new Date();
-      return  this.histoiresRepository.save(histoire);
+      
+      return  this.histoiresRepository.save(histoire).then(res => {
+          console.log(res)
+          if(userText){
+                return this.usersService.updateNombreHistoire(userText.id).then(res => {
+                    if(userDessin){
+                        return this.usersService.updateNombreDessin(userDessin.id);
+                    }
+                })
+            }else{
+                return this.usersService.updateNombreDessin(userDessin.id);
+            }
+      })
     }
     updateHistoire(user: Histoire): Promise<Histoire> {
         

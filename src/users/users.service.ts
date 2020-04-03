@@ -31,26 +31,8 @@ export class UsersService {
     });
   }
 
-  getUser(_id: number): Promise<User[]> {
+  getUser(_id: string): Promise<User[]> {
     return this.usersRepository.find({
-      select: [
-        'id',
-        'prenom',
-        'nom',
-        'pseudo',
-        'email',
-        'ville',
-        'motDePasse',
-        'nombreHistoire',
-        'nombreDessin',
-        'noteHistoire',
-        'noteDessin',
-        'isActive',
-        'role',
-        'dateDeCreation',
-        'dateDernierConnexion',
-        'lienPhoto',
-      ],
       where: [{ id: _id }],
     });
   }
@@ -92,6 +74,28 @@ export class UsersService {
         error, HttpStatus.FORBIDDEN,
       );
     });
+  }
+  updateNombreHistoire(user: string): Promise<User> {
+    return this.getUser(user).then(res =>{
+      let userText = res[0];
+      userText.nombreHistoire += 1;
+      return this.usersRepository.save(userText).catch(function(error) {
+        throw new HttpException(
+          error, HttpStatus.FORBIDDEN,
+        );
+      });
+    })
+  }
+  updateNombreDessin(user: string): Promise<User> {
+    return this.getUser(user).then(res =>{
+      let userText = res[0];
+      userText.nombreDessin += 1;
+      return this.usersRepository.save(userText).catch(function(error) {
+        throw new HttpException(
+          error, HttpStatus.FORBIDDEN,
+        );
+      });
+    })
   }
 
   deleteUser(user: User) {

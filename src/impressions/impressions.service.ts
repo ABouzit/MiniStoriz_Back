@@ -87,6 +87,7 @@ export class ImpressionsService {
         (notes.noteMoyDessins + impression.noteDessin) / notes.index;
       histoire.noteHistoireMoy =
         (notes.noteMoyText + impression.noteHistoire) / notes.index;
+      histoire.nombreComment = notes.index;
       return this.histoiresService.updateHistoire(histoire).then(() => {
         if (impression.histoire.userDessin.id == impression.histoire.userText.id) {
           return this.histoiresService.rateDessinByUser(impression.histoire.userDessin.id).then(res => {

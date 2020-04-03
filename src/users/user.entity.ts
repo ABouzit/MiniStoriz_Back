@@ -5,6 +5,8 @@ export class User {
     id: string;
     @Column({ length: 200, nullable: true })
     lienPhoto: string;
+    @Column({ length: 200, nullable: true })
+    lienCouverture: string;
     @Column({ length: 25, nullable: true })
     prenom: string;
     @Column({ length: 25 })
@@ -17,9 +19,9 @@ export class User {
     ville: string;
     @Column({ length: 25 })
     motDePasse: string;
-    @Column({ type: 'int', nullable: true})
+    @Column({ type: 'int', nullable: true, default: 0})
     nombreHistoire: number;
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'int', nullable: true, default: 0 })
     nombreDessin: number;
     @Column({ type: 'float', nullable: false, default: 0 })
     noteHistoire: number;
