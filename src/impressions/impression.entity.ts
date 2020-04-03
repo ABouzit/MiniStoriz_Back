@@ -18,4 +18,6 @@ export class Impression {
     noteDessin: number;
     @Column({ default: false })
     isActive: boolean;
+    @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
+    dateDeCreation: Date;
 }

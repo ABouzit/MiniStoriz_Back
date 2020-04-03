@@ -20,6 +20,6 @@ export class Histoire {
     titreHistoire: string;
     @Column({ length: 200, nullable: true })
     lienIllustration: string;
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     dateDeCreation: Date;
 }

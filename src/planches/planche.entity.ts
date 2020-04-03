@@ -9,7 +9,7 @@ export class Planche {
     histoire: Histoire;
     @Column({ length: 100, nullable: true})
     lienDessin: string;
-    @Column({ length: 1000, nullable: true })
+    @Column({ length: 10000, nullable: true })
     text: string;
     @Column()
     index: number;

@@ -33,15 +33,26 @@ export class ImpressionsService {
   getImpression(_id: number): Promise<Impression[]> {
     return this.impressionsRepository.find({
       relations: ['histoire','user'],
-      select: ['histoire', 'commentaire', 'noteHistoire', 'noteDessin','user'],
+      select: ['commentaire', 'noteHistoire', 'noteDessin','user'],
       where: [{ id: _id }],
     });
   }
   getImpressionsHistoire(_id: string): Promise<Impression[]> {
     return this.impressionsRepository.find({
-      relations: ['histoire','user'],
-      select: ['commentaire', 'noteHistoire', 'noteDessin','user'],
-      where: [{ histoire: _id }],
+      relations: ['histoire', 'user'],
+      where: [{ histoire: _id }], order: { dateDeCreation: 'DESC' }
+    });
+  }
+  getImpressionsHistoirebyNumberAndSkip(number: number, nbr: number,_id: string): Promise<Impression[]> {
+    return this.impressionsRepository.find({
+      relations: ['histoire', 'user'],
+      where: [{ histoire: _id }], skip: nbr, take: number, order: { dateDeCreation: 'DESC' }
+    });
+  }
+  getImpressionsHistoireByNumber(number: number,_id: string): Promise<Impression[]> {
+    return this.impressionsRepository.find({
+      relations: ['histoire', 'user'],
+      where: [{ histoire: _id }], take: number, order: { dateDeCreation: 'DESC' }
     });
   }
   getHistoireNotes(_id: string): Promise<any> {
@@ -66,7 +77,8 @@ export class ImpressionsService {
         });
       });
   }
-   createImpression(impression: Impression): Promise<Impression> {
+   createImpression(imp: Impression): Promise<Impression> {
+     let impression=imp;
     const histoire = impression.histoire;
     let userText= new User();
     let userDessin= new User();

@@ -20,18 +20,18 @@ import { AppService } from './app.service';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      /* type: 'mysql',
       host: '139.162.173.7',
       port: 3306,
       username: 'codemedi_ministoriez',
       password: 'codemedi_ministoriez',
-      database: 'codemedi_ministoriez',
-      //type: 'mysql',
-      //host: '127.0.0.1',
-      //port: 3306,
-      // username: 'root',
-      //  password: '',
-      //   database: 'MiniStorizDb',
+      database: 'codemedi_ministoriez', */
+        type: 'mysql',
+        host: '127.0.0.1',
+        port: 3306,
+        username: 'root',
+        password: '',
+        database: 'MiniStorizDb',
       //  host: '139.162.169.45',
       //  port: 3306,
       //  username: 'codesqu1_ministoriez',

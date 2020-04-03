@@ -16,9 +16,9 @@ export class PlanchesController {
         return res.status(HttpStatus.OK).json(planche);
     }
     @Get('histoire/:id')
-    async getByHistoire(@Res() res, @Param() params) {
-        return await this.service.getPlancheByHistoire(params.id).then((planche) => 
-        res.status(HttpStatus.OK).json(planche));
+     getByHistoire(@Res() res, @Param() params) {
+        return  this.service.getPlancheByHistoire(params.id).then((planche) =>
+       {return res.status(HttpStatus.OK).json(planche)});
     }
     @Get()
     async getAll(@Res() res) {

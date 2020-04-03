@@ -175,7 +175,6 @@ export class HistoiresService {
     getHistoire(_id: number): Promise<Histoire[]> {
         return this.histoiresRepository.find({
             relations: ['userText', 'userDessin'],
-            select: ['userText', 'userDessin', 'noteDessinMoy', 'noteHistoireMoy', 'nombreVue', 'titreHistoire', 'lienIllustration'],
             where: [{ id: _id }],
         });
     }
