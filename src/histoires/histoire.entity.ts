@@ -4,10 +4,12 @@ import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, JoinTable, ManyToOn
 export class Histoire {
     @PrimaryGeneratedColumn('uuid')
     id: string;
-    @ManyToOne(type => User, { eager: true })
+    @ManyToOne(type => User, {
+        eager: true, nullable: true })
     @JoinColumn()
     userText: User;
-    @ManyToOne(type => User, { eager: true })
+    @ManyToOne(type => User, {
+        eager: true, nullable: true })
     @JoinColumn()
     userDessin: User;
     @Column({ type: 'float', nullable: true })
