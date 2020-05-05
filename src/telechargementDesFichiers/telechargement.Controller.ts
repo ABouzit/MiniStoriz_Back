@@ -13,7 +13,6 @@ export class TelechargementController {
             cb(null, 'planche_' + (Math.floor(Math.random() * 90000000) + 10000000) + file.originalname.substr(file.originalname.indexOf('.'), file.originalname.lenght));
         }})}))
     uploadPlancheImg( @UploadedFile() file ) {
-        console.log(file);
         return Promise.resolve({
            filePath: file.path,
         });
@@ -28,7 +27,6 @@ export class TelechargementController {
         cb(null, 'histoire_' + (Math.floor(Math.random() * 90000000) + 10000000) + file.originalname.substr(file.originalname.indexOf('.'), file.originalname.lenght));
     }})}))
     uploadHistoireImg( @UploadedFile() file ) {
-        console.log(file);
         return Promise.resolve({
         filePath: file.path,
     });
@@ -43,7 +41,20 @@ export class TelechargementController {
         cb(null, 'photoProfile_' + (Math.floor(Math.random() * 90000000) + 10000000) + file.originalname.substr(file.originalname.indexOf('.'), file.originalname.lenght));
     }})}))
     uploadPhotoProfilImg( @UploadedFile() file ) {
-        console.log(file);
+        return Promise.resolve({
+        filePath: file.path,
+    });
+}
+@Post('photoMessage')
+@UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+    destination(req, file, cb) {
+        cb(null, 'images/photomessage');
+    },
+    filename(req, file, cb) {
+        cb(null, 'photoMessage_' + (Math.floor(Math.random() * 90000000000) + 10000000) + file.originalname.substr(file.originalname.indexOf('.'), file.originalname.lenght));
+    }})}))
+    uploadMessageImg( @UploadedFile() file ) {
         return Promise.resolve({
         filePath: file.path,
     });

@@ -3,5 +3,7 @@ export class UserInfo {
     email: string;
     role: role;
     message:string;
+    lienPhoto:string;
+    pseudo:string;
     id:string;
 }

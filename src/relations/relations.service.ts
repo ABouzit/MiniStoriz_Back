@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { Relation } from './relation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -8,25 +8,63 @@ export class RelationsService {
     constructor(
         @InjectRepository(Relation)
         private relationsRepository: Repository<Relation>,
+        
     ) { }
-    async getRelations(): Promise<Relation[]> {
-        return await this.relationsRepository.find({ relations: ['userOne', 'userTwo'] });
+    getRelations(): Promise<Relation[]> {
+        return  this.relationsRepository.find({ relations: ['userOne', 'userTwo'] });
     }
-    async getRelation(_id: number): Promise<Relation[]> {
-        return await this.relationsRepository.find({
+     getRelation(_id: string): Promise<Relation[]> {
+        return  this.relationsRepository.find({
             relations: ['userOne', 'userTwo'],
             select: ['userOne', 'userTwo', 'isActive'],
             where: [{ id: _id }],
         });
     }
-    async createRelation(relation: Relation) {
-        this.relationsRepository.save(relation);
+    getRelationRequest(id: string): Promise<Relation[]> {
+        return  this.relationsRepository.find({
+            relations: ['userOne', 'userTwo'],
+            
+            where: [{ userTwo: id, isActive: false }],
+        });
     }
-    async updateRelation(relation: Relation) {
-        this.relationsRepository.save(relation);
+    getRelationRequestNbr(id: string) {
+        return  this.relationsRepository.count({
+            relations: ['userOne', 'userTwo'],
+            
+            where: [{ userTwo: id, isActive: false, read: false }],
+        });
+    }
+    getRelationId(id: string, id2: string) {
+        
+        return this.relationsRepository.count({where: [{userOne: id,userTwo: id2},{userOne: id2,userTwo: id}]});
+    }
+    getRelationById(id: string, id2: string): Promise<Relation[]> {
+        
+        return this.relationsRepository.find({where: [{userOne: id,userTwo: id2},{userOne: id2,userTwo: id}]});
+    }
+    getRelationIdAccepte(id: string, id2: string) {
+        
+        return this.relationsRepository.count({where: [{userOne: id,userTwo: id2, isActive: true},{userOne: id2,userTwo: id, isActive: true}]});
+    }
+     createRelation(relation: Relation) {
+       return this.relationsRepository.save(relation);
+    }
+     updateRelation(relation: Relation): Promise<any> {
+            return this.relationsRepository.save(relation);
     }
 
-    async deleteRelation(relation: Relation) {
-        this.relationsRepository.delete(relation);
+    deleteRelation(id: string) {
+        let relation = new Relation();
+        relation.id = id;
+        return this.relationsRepository.remove(relation);
+    }
+    deleteRelationById(id1: string,id2: string) {
+        return this.getRelationById(id1,id2).then(res=>{
+            console.log(res)
+            res.map((relation,index)=>{console.log(relation)
+                return this.relationsRepository.remove(relation);
+            })
+            
+        })
     }
 }

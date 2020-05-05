@@ -4,7 +4,7 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 @Entity()
 export class Planche {
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id: string;
     @ManyToOne(type => Histoire)
     histoire: Histoire;
     @Column({ length: 100, nullable: true})

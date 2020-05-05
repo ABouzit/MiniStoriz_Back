@@ -5,7 +5,7 @@ import { User } from 'src/users/user.entity';
 @Entity()
 export class Impression {
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id: string;
     @ManyToOne(type => Histoire)
     histoire: Histoire;
     @ManyToOne(type => User)

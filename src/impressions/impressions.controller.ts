@@ -62,4 +62,11 @@ create( @Body() impression: Impression, @Res() res ) {
       post: deletedImpression,
     });
   }
+  @Delete('/histoire/:id')
+   deleteHistoire(@Param() params,  @Res() res ) {
+    return this.service.deleteHistoire(params.id).then(imp=>{
+      return res.status(HttpStatus.OK).json(imp);
+    })
+    
+  }
 }

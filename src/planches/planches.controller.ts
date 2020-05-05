@@ -20,6 +20,11 @@ export class PlanchesController {
         return  this.service.getPlancheByHistoire(params.id).then((planche) =>
        {return res.status(HttpStatus.OK).json(planche)});
     }
+    @Get('histoires/:id')
+    getPlancheByHistoireId(@Res() res, @Param() params) {
+        return  this.service.getPlancheByHistoireId(params.id).then((planche) =>
+       {return res.status(HttpStatus.OK).json(planche)});
+    }
     @Get()
     async getAll(@Res() res) {
         const planches = await this.service.getPlanches();

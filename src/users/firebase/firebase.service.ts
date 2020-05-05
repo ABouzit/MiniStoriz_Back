@@ -8,9 +8,9 @@ import * as moment from 'moment';
 @Injectable()
 export class FirebaseService {
   constructor(private userInfo: UserInfo) {}
-  async registerWithFirebase(user: User): Promise<UserInfo> {
+  registerWithFirebase(user: User): Promise<UserInfo> {
     const _this = this;
-    await admin
+    return admin
       .auth()
       .createUser({
         uid: user.id,
@@ -20,9 +20,9 @@ export class FirebaseService {
         displayName: user.pseudo,
         disabled: false,
       })
-      .then(async function(userRecord) {
+      .then( function(userRecord) {
         console.log(userRecord);
-        await admin
+        return admin
           .auth()
           .createCustomToken(userRecord.uid, { role: user.role })
           .then(function(customToken) {
@@ -30,8 +30,11 @@ export class FirebaseService {
             _this.userInfo.token = customToken;
             _this.userInfo.email = user.email;
             _this.userInfo.role = user.role;
+            _this.userInfo.lienPhoto = user.lienPhoto;
+            _this.userInfo.pseudo = user.pseudo;
             _this.userInfo.message = 'utilisateur cree avec succes !';
             console.log(_this.userInfo);
+            return _this.userInfo;
           })
           .catch(function(error) {
             throw new HttpException(
@@ -46,31 +49,53 @@ export class FirebaseService {
           error, HttpStatus.FORBIDDEN,
         );
       });
-    return this.userInfo;
+    
   }
-async loginWithFirebase(user: User): Promise<UserInfo> {
+ loginWithFirebase(user: User): Promise<UserInfo> {
     const _this = this;
-    await firebase
+    return firebase
        .auth()
        .signInWithEmailAndPassword(
         user.email, user.motDePasse)
-       .then(async function(userRecord) {
-           console.log(userRecord);
-           await admin
+       .then( function(userRecord) {
+           
+           return admin
           .auth()
           .createCustomToken(userRecord.user.uid)
           .then(function(customToken) {
             _this.userInfo.token = customToken;
             _this.userInfo.email = user.email;
+            _this.userInfo.id = user.id;
             _this.userInfo.role = user.role;
+            _this.userInfo.lienPhoto = user.lienPhoto;
+            _this.userInfo.pseudo = user.pseudo;
             _this.userInfo.message = 'utilisateur connectee avec succes !';
-          
+            console.log(_this.userInfo)
+            return _this.userInfo;
           }).catch(function (error) {
             throw new HttpException(
               error, HttpStatus.FORBIDDEN,
             );
-          });;
+          });
        });
-    return this.userInfo;
-}
+  }
+  changePasswordWithFirebase(user: User, password: string): any {
+    const _this = this;
+    var users;
+    return firebase
+    .auth()
+    .signInWithEmailAndPassword(
+     user.email, user.motDePasse).then( function(userRecord) {
+       users = userRecord.user;
+       return users.updatePassword(password).then(function() {
+      console.log("updated")
+      return "updated";
+    }).catch(function(error) {
+      throw new HttpException(
+        error, HttpStatus.FORBIDDEN,
+      );
+    });
+     })
+   
+  }
 }

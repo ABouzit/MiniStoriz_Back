@@ -8,12 +8,44 @@ export class RelationsController {
     constructor(private service: RelationsService) { }
 
     @Get(':id')
-    async get(@Res() res, @Param() params) {
-        const relation = await this.service.getRelation(params.id);
-        if (relation.length === 0) {
-            throw new NotFoundException('La relation n\'existe pas!');
-        }
-        return res.status(HttpStatus.OK).json(relation);
+     get(@Res() res, @Param() params) {
+        return this.service.getRelation(params.id).then(relation=>{
+            return res.status(HttpStatus.OK).json(relation);
+        });
+        
+    }
+    @Get('/request/:id')
+    getRelationRequest(@Res() res, @Param() params) {
+       return this.service.getRelationRequest(params.id).then(relations=>{
+        return Promise.all(relations.map((relation,index)=>{
+            if (relation.read == false && relation.userTwo.id == params.id) {
+                relation.read = true
+               return this.service.updateRelation(relation); 
+            }
+          })).then(()=>{
+            return this.service.getRelationRequest(params.id).then(relations=>{
+                return res.status(HttpStatus.OK).json(relations);
+            }); 
+          })
+        })  
+    }
+    @Get('/getNumberRequest/:id')
+    getRelationRequestNbr(@Res() res, @Param() params) {
+        return this.service.getRelationRequestNbr(params.id).then(relations=>{
+            return res.status(HttpStatus.OK).json(relations);
+        });
+    }
+    @Get('/getRelationId/:id/:id2')
+     getRelationId(@Res() res, @Param() params) {
+        return this.service.getRelationId(params.id,params.id2).then(relation=>{
+            return res.status(HttpStatus.OK).json(relation);
+        });
+    }
+    @Get('/getRelationIdAccepte/:id/:id2')
+    getRelationIdAccepte(@Res() res, @Param() params) {
+        return this.service.getRelationIdAccepte(params.id,params.id2).then(relation=>{
+            return res.status(HttpStatus.OK).json(relation);
+        });
     }
     @Get()
     async getAll(@Res() res) {
@@ -21,29 +53,30 @@ export class RelationsController {
         return res.status(HttpStatus.OK).json(relations);
     }
     @Post()
-    async create(@Body() relation: Relation, @Res() res) {
-        const newRelation = await this.service.createRelation(relation);
-        return res.status(HttpStatus.OK).json({
-            message: 'La relation a ete cree avec succes!',
-            post: newRelation,
-        });
+    create(@Body() relation: Relation, @Res() res) {
+        return  this.service.createRelation(relation).then(ress=>{
+            return res.status(HttpStatus.OK).json(ress);
+        })
+        
     }
 
     @Put()
-    async update(@Body() relation: Relation, @Res() res) {
-        const updatedRelation = await this.service.updateRelation(relation);
-        return res.status(HttpStatus.OK).json({
-            message: 'La relation a ete mis a jour avec succes!',
-            post: updatedRelation,
-        });
+     update(@Body() relation: Relation, @Res() res) {
+        return this.service.updateRelation(relation).then(ress=>{
+            return res.status(HttpStatus.OK).json(ress);
+        })
     }
 
     @Delete(':id')
-    async deleteUser(@Param() params, @Res() res) {
-        const deletedRelation = await this.service.deleteRelation(params.id);
-        return res.status(HttpStatus.OK).json({
-            message: 'L\'utilisateur a ete supprimer avec succes!',
-            post: deletedRelation,
-        });
+     deleteUser(@Param() params, @Res() res) {
+        return this.service.deleteRelation(params.id).then(ress=>{
+            return res.status(HttpStatus.OK).json(ress);
+        })
+    }
+    @Delete('/between/:id1/:id2')
+     deleteRelations(@Param() params, @Res() res) {
+        return this.service.deleteRelationById(params.id1,params.id2).then(ress=>{
+            return res.status(HttpStatus.OK).json(ress);
+        })
     }
 }

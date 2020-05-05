@@ -3,6 +3,8 @@ import { Histoire } from './histoire.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, In } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
+import { PlanchesService } from 'src/planches/planches.service';
+import { ImpressionsService } from 'src/impressions/impressions.service';
 
 @Injectable()
 export class HistoiresService {
@@ -10,6 +12,7 @@ export class HistoiresService {
         @InjectRepository(Histoire)
         private histoiresRepository: Repository<Histoire>,
         private usersService: UsersService,
+        private planchesService: PlanchesService,
     ) { }
 
     getHistoires(): Promise<Histoire[]> {
@@ -60,34 +63,34 @@ export class HistoiresService {
     getNumberOfHistoiresSearchByUser(number: number, nbr: number, filtre: number, search:string, id:string): Promise<Histoire[]> {
         if (filtre == 1) {
             if (search == "xxxx") {
-                return this.histoiresRepository.find({ relations: ['userText', 'userDessin'], where: {userText: id}, skip: nbr, take: number, order: {nombreVue: 'DESC'},});
+                return this.histoiresRepository.find({ relations: ['userText', 'userDessin'], where: [{userText: id},{userDessin: id}], skip: nbr, take: number, order: {nombreVue: 'DESC'},});
             } else {
                 return this.histoiresRepository.find({ relations: ['userText', 'userDessin'],
-                    where: [{ userText: id, titreHistoire: Like('%'+search+'%')}], skip: nbr, take: number, order: {nombreVue: 'DESC'}});
+                    where: [{ userText: id, titreHistoire: Like('%'+search+'%')},{ userDessin: id, titreHistoire: Like('%'+search+'%')}], skip: nbr, take: number, order: {nombreVue: 'DESC'}});
                     
             }
         } else if(filtre == 2) {
             if (search == "xxxx") {
-                return this.histoiresRepository.find({ relations: ['userText', 'userDessin'], where: {userText: id}, skip: nbr, take: number, order: {noteHistoireMoy: 'DESC', noteDessinMoy: 'DESC'} });
+                return this.histoiresRepository.find({ relations: ['userText', 'userDessin'], where: [{userText: id},{userDessin: id}], skip: nbr, take: number, order: {noteHistoireMoy: 'DESC', noteDessinMoy: 'DESC'} });
             } else {
                 return this.histoiresRepository.find({ relations: ['userText', 'userDessin'],
-                    where: [{ userText: id,titreHistoire: Like('%'+search+'%')}], skip: nbr, take: number, order: {noteHistoireMoy: 'DESC', noteDessinMoy: 'DESC'}});
+                    where: [{ userText: id,titreHistoire: Like('%'+search+'%')},{ userDessin: id, titreHistoire: Like('%'+search+'%')}], skip: nbr, take: number, order: {noteHistoireMoy: 'DESC', noteDessinMoy: 'DESC'}});
                     
             }
         } else if(filtre == 3) {
             if (search == "xxxx") {
-                return this.histoiresRepository.find({ relations: ['userText', 'userDessin'], where: {userText: id}, skip: nbr, take: number, order: {dateDeCreation: 'DESC'} });
+                return this.histoiresRepository.find({ relations: ['userText', 'userDessin'], where: [{userText: id},{userDessin: id}], skip: nbr, take: number, order: {dateDeCreation: 'DESC'} });
             } else {
                 return this.histoiresRepository.find({ relations: ['userText', 'userDessin'],
-                    where: [{ userText: id,titreHistoire: Like('%'+search+'%')}], skip: nbr, take: number, order: {dateDeCreation: 'DESC'}});
+                    where: [{ userText: id,titreHistoire: Like('%'+search+'%')},{ userDessin: id, titreHistoire: Like('%'+search+'%')}], skip: nbr, take: number, order: {dateDeCreation: 'DESC'}});
                 
             }
         } else if(filtre == 4) {
             if (search == "xxxx") {
-                return this.histoiresRepository.find({ relations: ['userText', 'userDessin'], where: {userText: id}, skip: nbr, take: number, order: {dateDeCreation: 'ASC'} });
+                return this.histoiresRepository.find({ relations: ['userText', 'userDessin'], where: [{userText: id},{userDessin: id}], skip: nbr, take: number, order: {dateDeCreation: 'ASC'} });
             } else {
                 return this.histoiresRepository.find({ relations: ['userText', 'userDessin'],
-                    where: [{ userText: id,titreHistoire: Like('%'+search+'%')}], skip: nbr, take: number, order: {dateDeCreation: 'ASC'}});
+                    where: [{ userText: id,titreHistoire: Like('%'+search+'%')},{ userDessin: id, titreHistoire: Like('%'+search+'%')}], skip: nbr, take: number, order: {dateDeCreation: 'ASC'}});
                    
             }
         }
@@ -136,7 +139,7 @@ export class HistoiresService {
                 
                 return this.usersService.getUsersSearch(search).then(result => {
                         return this.histoiresRepository.find({ relations: ['userText', 'userDessin'],
-                            where: [{ userText: In(result)}], skip: nbr, take: number, order: {nombreVue: 'DESC'}});
+                            where: [{ userText: In(result)},{ userDessin: In(result)}], skip: nbr, take: number, order: {nombreVue: 'DESC'}});
                     
                   });
             }
@@ -146,7 +149,7 @@ export class HistoiresService {
             } else {
                 return this.usersService.getUsersSearch(search).then(result => {
                         return this.histoiresRepository.find({ relations: ['userText', 'userDessin'],
-                            where: [{ userText: In(result)}], skip: nbr, take: number, order: {noteHistoireMoy: 'DESC', noteDessinMoy: 'DESC'}});
+                            where: [{ userText: In(result)},{ userDessin: In(result)}], skip: nbr, take: number, order: {noteHistoireMoy: 'DESC', noteDessinMoy: 'DESC'}});
                   
                   });
             }
@@ -156,7 +159,7 @@ export class HistoiresService {
             } else {
                 return this.usersService.getUsersSearch(search).then(result => {
                         return this.histoiresRepository.find({ relations: ['userText', 'userDessin'],
-                            where: [{ userText: In(result)}], skip: nbr, take: number, order: {dateDeCreation: 'DESC'}});
+                            where: [{ userText: In(result)},{ userDessin: In(result)}], skip: nbr, take: number, order: {dateDeCreation: 'DESC'}});
                     
                   });
             }
@@ -166,7 +169,7 @@ export class HistoiresService {
             } else {
                 return this.usersService.getUsersSearch(search).then(result => {
                         return this.histoiresRepository.find({ relations: ['userText', 'userDessin'],
-                            where: [{ userText: In(result)}], skip: nbr, take: number, order: {dateDeCreation: 'ASC'}});
+                            where: [{ userText: In(result)},{ userDessin: In(result)}], skip: nbr, take: number, order: {dateDeCreation: 'ASC'}});
                    
                   });
             }
@@ -184,27 +187,39 @@ export class HistoiresService {
       let userDessin = histoire.userDessin;
         
       histoire.dateDeCreation = new Date();
-      
-      return  this.histoiresRepository.save(histoire).then(res => {
-          console.log(res)
           if(userText){
-                return this.usersService.updateNombreHistoire(userText.id).then(res => {
+                return this.usersService.updateNombreHistoire(userText.id).then(ress => {
                     if(userDessin){
-                        return this.usersService.updateNombreDessin(userDessin.id);
+                        return this.usersService.updateNombreDessin(userDessin.id).then(rss => {
+                            return  this.histoiresRepository.save(histoire)
+                        });
+                    }else {
+                        return  this.histoiresRepository.save(histoire)
                     }
                 })
             }else{
-                return this.usersService.updateNombreDessin(userDessin.id);
+                return this.usersService.updateNombreDessin(userDessin.id).then(rsss => {
+                    return  this.histoiresRepository.save(histoire)
+                })
             }
-      })
+      
     }
-    updateHistoire(user: Histoire): Promise<Histoire> {
-        
-        return this.histoiresRepository.save(user);
+    updateHistoire(histoire: Histoire): Promise<Histoire> {
+        histoire.dateDeCreation = new Date();
+        return this.histoiresRepository.save(histoire);
     }
 
-    deleteHistoire(user: Histoire) {
-        this.histoiresRepository.delete(user);
+    deleteHistoire(id: string) {
+        let histoire = new Histoire();
+        histoire.id = id;
+        return this.planchesService.getPlancheByHistoire(id).then(planches => {
+            return Promise.all(planches.map((planche, index) =>{
+                this.planchesService.deletePlanche(planche)
+            })).then(()=> {
+                    return this.histoiresRepository.delete(histoire);
+            })
+        })
+        
     }
 
     numberHistoire() {
@@ -212,7 +227,7 @@ export class HistoiresService {
     }
 
     numberHistoireByUser(id:string) {
-        return this.histoiresRepository.count({  relations: ['userText', 'userDessin'],where: [{ userText: id }] });
+        return this.histoiresRepository.count({ relations: ['userText', 'userDessin'],where: [{ userText: id }] });
      }
 
     numberHistoireSearch(search: string) {

@@ -12,10 +12,12 @@ import { ImpressionsModule } from './impressions/impressions.module';
 import { PlanchesModule } from './planches/planches.module';
 import { Histoire } from './histoires/histoire.entity';
 import { Planche } from './planches/planche.entity';
+import { Notification } from './notification/notification.entity';
 import { Impression } from './impressions/impression.entity';
 import { TelechargementController } from './telechargementDesFichiers/telechargement.Controller';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -42,7 +44,7 @@ import { AppService } from './app.service';
       //  username: 'codesqu1_ministoriez',
       //   password: 'codesqu1_ministoriez',
       //   database: 'codesqu1_ministoriez',
-      entities: [User, Relation, Message, Histoire, Planche, Impression],
+      entities: [User, Relation, Message, Histoire, Planche, Impression, Notification],
       synchronize: true,
       logging: true,
     }),
@@ -53,6 +55,7 @@ import { AppService } from './app.service';
     HistoiresModule,
     ImpressionsModule,
     PlanchesModule,
+    NotificationModule,
   ],
   providers: [AppService],
   controllers: [TelechargementController, AppController],

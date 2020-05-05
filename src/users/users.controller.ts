@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Post, Body, Put, Delete, Res, HttpStatus, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
+import { Relation } from 'src/relations/relation.entity';
 @Controller('users')
 export class UsersController {
   constructor(private service: UsersService) {}
@@ -13,9 +14,33 @@ export class UsersController {
     }
     return res.status(HttpStatus.OK).json(user);
   }
-  @Get()
-  async getAll(@Res() res) {
-    const users = await this.service.getUsers();
+  @Get('/take/:number/:skip/:search/:id')
+  getAllUsersSearch(@Res() res, @Param() params) {
+        return this.service.getAllUsersSearch(params.id,params.number,params.skip,params.search).then((users) => {
+            return res.status(HttpStatus.OK).json(users);
+        });
+  }
+  @Get('/relations/:search/:id')
+  getAllUsersSearchs(@Res() res, @Param() params) {
+        return this.service.getAllUsersSearchs(params.id,params.search).then((users) => {
+            return res.status(HttpStatus.OK).json(users);
+        });
+  }
+  @Get('/relations/:id')
+  getAllUsers(@Res() res, @Param() params) {
+        return this.service.getAllUsers(params.id).then((users) => {
+            return res.status(HttpStatus.OK).json(users);
+        });
+  }
+  @Get('/numberSearchUsers/:search')
+    getNumberSearchUsers(@Res() res, @Param() params) {
+        return  this.service.getNumberUsersSearch(params.search).then((number) => {
+            return res.status(HttpStatus.OK).json(number);
+        });
+    }
+  @Get('/userRelation/:id')
+  async getAll(@Res() res,@Param() params) {
+    const users = await this.service.getUsers(params.id);
     return res.status(HttpStatus.OK).json(users);
   }
   @Post()
@@ -35,7 +60,12 @@ export class UsersController {
       post: updatedUser,
     });
   }
-
+  @Put('/relation/:id')
+  updateRelation(@Param() params,@Body() relation: Relation, @Res() res) {
+    return this.service.updateRelation(relation,params.id).then((relation) => {
+      return res.status(HttpStatus.OK).json(relation);
+  });
+  }
   @Delete(':id')
   async deleteUser(@Param() params, @Res() res) {
     const deletedUsed = await this.service.deleteUser(params.id);
@@ -55,9 +85,14 @@ export class UsersController {
     const users = await this.service.signIn(user);
     return res.status(HttpStatus.OK).json(users);
   }
+  @Post('changePassword')
+  async changePassword(@Body() user: User, @Res() res) {
+    const users = await this.service.updatePassword(user);
+    return res.status(HttpStatus.OK).json(users);
+  }
   @Post('logOut')
-  async logOut(@Res() res) {
-    const users = await this.service.logOut();
+   logOut(@Res() res) {
+    const users = this.service.logOut();
     return res.status(HttpStatus.OK).json(users);
   }
 }

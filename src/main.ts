@@ -6,6 +6,8 @@ import 'firebase/auth';
 import 'firebase/firestore';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
+  var serviceAccount = require("../ministoriz-firebase-adminsdk-6tlsd-e0909d47c0.json");
+  
   const firebaseConfig = {
      apiKey: 'AIzaSyAMxYL804MZ93kG1Frc-rl0x1w9KHpAijE',
      authDomain: 'ministoriz.firebaseapp.com',
@@ -18,9 +20,13 @@ async function bootstrap() {
    };
   firebase.initializeApp(firebaseConfig);
   admin.initializeApp({
-     credential: admin.credential.applicationDefault(),
-     databaseURL: 'https://ministorizdb.firebaseio.com',
-   });
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://ministoriz.firebaseio.com"
+  });
+  // admin.initializeApp({
+  //    credential: admin.credential.applicationDefault(),
+  //    databaseURL: 'https://ministorizdb.firebaseio.com',
+  //  });
   await app.listen(5600);
 
 }

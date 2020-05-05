@@ -6,13 +6,38 @@ import { Message } from './message.entity';
 export class MessagesController {
     constructor(private service: MessagesService) { }
 
-    @Get(':id')
-    async get(@Res() res,@Param() params) {
-        const message = await this.service.getMessage(params.id);
-        if (message.length === 0) {
-            throw new NotFoundException('Le message n\'existe pas!');
-        }
-        return res.status(HttpStatus.OK).json(message);
+    @Get('/between/:id1/:id2/:take/:skip')
+    getMessage(@Res() res,@Param() params) {
+        return this.service.getMessage(params.id1,params.id2,params.skip,params.take).then(messages=>{
+            return Promise.all(messages.map((message,index)=>{
+                if (message.vue == false && message.userTwo.id == params.id1) {
+                   message.vue = true
+                   return this.service.updateMessage(message); 
+                }
+              })).then(()=>{
+                return this.service.getMessage(params.id1,params.id2,params.skip,params.take).then(messages=>{
+                    return res.status(HttpStatus.OK).json(messages);
+                }); 
+              })
+            })
+    }
+    @Get('/nbrMessage/:id1/:id2')
+    getNbrMessage(@Res() res,@Param() params) {
+        return this.service.getNbrMessage(params.id1,params.id2).then(messages=>{
+                    return res.status(HttpStatus.OK).json(messages);
+            })
+    }
+    @Get('/users/:id1')
+    getUserMessage(@Res() res,@Param() params) {
+        return this.service.getUserMessage(params.id1).then(messages=>{
+            return res.status(HttpStatus.OK).json(messages);
+        });
+    }
+    @Get('/numberVueTotal/:id1')
+    getNumberVueTotal(@Res() res,@Param() params) {
+        return this.service.getNumberVueTotal(params.id1).then(messages=>{
+            return res.status(HttpStatus.OK).json(messages);
+        });
     }
     @Get()
     async getAll(@Res() res) {
@@ -20,11 +45,10 @@ export class MessagesController {
         return res.status(HttpStatus.OK).json(messages);
     }
     @Post()
-    async create(@Body() message: Message, @Res() res) {
-        const newMessage = await this.service.createMessage(message);
-        return res.status(HttpStatus.OK).json({
-            message: 'Le message a ete cree avec succes!',
-            post: newMessage,
+    create(@Body() message: Message, @Res() res) {
+        return this.service.createMessage(message).then(messages=>{
+            
+            return res.status(HttpStatus.OK).json(messages);
         });
     }
 

@@ -154,16 +154,15 @@ export class HistoiresController {
         return  this.service.updateHistoire(histoire).then((result) => {
              return res.status(HttpStatus.OK).json({
                  message: 'L\'histoire a ete mis a jour avec succes!',
-                 post: result,
+                 id: result.id,
              }); },
         );
     }
     @Delete(':id')
      deleteUser(@Param() params, @Res() res) {
-        const deletedHistoire = this.service.deleteHistoire(params.id);
-        return res.status(HttpStatus.OK).json({
-            message: 'L\'histoire a ete supprimer avec succes!',
-            post: deletedHistoire,
-        });
+        return this.service.deleteHistoire(params.id).then(histoire => {
+            return res.status(HttpStatus.OK).json(histoire);
+        })
+        
     }
 }

@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 @Entity()
+@Unique(['email'])
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -11,14 +12,16 @@ export class User {
     prenom: string;
     @Column({ length: 25 })
     nom: string;
-    @Column({ length: 25, nullable: true })
+    @Column({ length: 40, nullable: true })
     pseudo: string;
-    @Column({ length: 25 })
+    @Column({ name: 'email', length: 100 })
     email: string;
     @Column({ length: 25, nullable: true })
     ville: string;
     @Column({ length: 25 })
     motDePasse: string;
+    @Column({ type: 'int', nullable: true, default: 0})
+    nombreReseau: number;
     @Column({ type: 'int', nullable: true, default: 0})
     nombreHistoire: number;
     @Column({ type: 'int', nullable: true, default: 0 })
@@ -29,10 +32,10 @@ export class User {
     noteDessin: number;
     @Column({default: false})
     isActive: boolean;
-    @Column()
+    @Column({ length: 255, default: 'USER' })
     role: role;
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     dateDeCreation: Date;
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     dateDernierConnexion: Date;
 }
