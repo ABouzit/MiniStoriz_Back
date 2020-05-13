@@ -5,7 +5,7 @@ import { User } from 'src/users/user.entity';
 export class Message {
     @PrimaryGeneratedColumn('uuid')
     id: string;
-    @Column({ length: 1000})
+    @Column({ length: 1000,default:''})
     message: string;
     @ManyToOne(type => User)
     userOne: User;

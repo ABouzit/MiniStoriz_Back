@@ -140,9 +140,9 @@ export class HistoiresController {
             return res.status(HttpStatus.OK).json(number);
         });
     }
-    @Post()
-    create(@Body() histoire: Histoire, @Res() res) {
-        return this.service.createHistoire(histoire).then((newHistoire) => {
+    @Post(':id')
+    create(@Body() histoire: Histoire, @Res() res, @Param() params) {
+        return this.service.createHistoire(histoire,params.id).then((newHistoire) => {
             return res.status(HttpStatus.OK).json({
                 message: 'L\'histoire a ete cree avec succes!',
                 id: newHistoire.id,

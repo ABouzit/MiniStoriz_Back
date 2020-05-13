@@ -18,6 +18,8 @@ import { TelechargementController } from './telechargementDesFichiers/telecharge
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NotificationModule } from './notification/notification.module';
+import { Bloquer } from './bloquer/bloquer.entity';
+import { BloquersModule } from './bloquer/bloquers.module';
 
 @Module({
   imports: [
@@ -44,7 +46,7 @@ import { NotificationModule } from './notification/notification.module';
       //  username: 'codesqu1_ministoriez',
       //   password: 'codesqu1_ministoriez',
       //   database: 'codesqu1_ministoriez',
-      entities: [User, Relation, Message, Histoire, Planche, Impression, Notification],
+      entities: [User, Relation, Message, Histoire, Planche, Impression, Notification,Bloquer],
       synchronize: true,
       logging: true,
     }),
@@ -56,6 +58,7 @@ import { NotificationModule } from './notification/notification.module';
     ImpressionsModule,
     PlanchesModule,
     NotificationModule,
+    BloquersModule
   ],
   providers: [AppService],
   controllers: [TelechargementController, AppController],
