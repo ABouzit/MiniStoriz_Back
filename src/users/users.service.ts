@@ -168,11 +168,42 @@ export class UsersService {
     return us;
   }
   updateUser(user: User): Promise<User> {
-    // console.log(user)
+    console.log(user)
     return this.usersRepository.save(user).catch(function(error) {
       throw new HttpException(
         error, HttpStatus.FORBIDDEN,
       );
+    });
+  }
+  updateUsers(user: User){
+    const _this = this;
+    let us1 = new User();
+    let us2 = new User();
+    return this.getUserByEmail(user.email).then(function(result) {
+      console.log(result.length);
+      if (result.length < 1) {
+        return "errorUtilisateur";
+      } else {
+      us2 = result[0]; 
+      us1 = result[0];
+      const password = us1.motDePasse;
+      us1.motDePasse = user.motDePasse;
+      return _this.updateUser(us1).then(function(result1) {
+        us2.motDePasse = password;
+        console.log(result1);
+        return _this.firebaseService.changePasswordWithFirebase(us2,user.motDePasse).then(res => {
+          console.log(res);
+          return res;
+        }).catch(function(error) {
+          console.log(error);
+          return "errorUpdatePasswordFB";
+        });
+       });
+        
+      }
+    }).catch(function(error) {
+      console.log(error);
+      return "errorUtilisateur";
     });
   }
   updateNombreHistoire(user: string): Promise<User> {
