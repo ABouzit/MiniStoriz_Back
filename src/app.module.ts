@@ -20,7 +20,12 @@ import { AppService } from './app.service';
 import { NotificationModule } from './notification/notification.module';
 import { Bloquer } from './bloquer/bloquer.entity';
 import { BloquersModule } from './bloquer/bloquers.module';
-
+import { Signaler } from './Signaler/signaler.entity';
+import { SignalersModule } from './Signaler/signalers.module';
+import { Admin } from './admins/admin.entity';
+import { AdminsModule } from './admins/admins.module';
+import { Contact } from './Contact/contact.entity';
+import { ContactsModule } from './Contact/contacts.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -37,20 +42,20 @@ import { BloquersModule } from './bloquer/bloquers.module';
         password: '',
         database: 'MiniStorizDb',
       //  host: '139.162.169.45',
-      //  port: 3306,
-      //  username: 'codesqu1_ministoriez',
-      //  password: 'codesqu1_ministoriez',
-      //  database: 'codesqu1_ministoriez',
+     /* //  port: 3306,
+      //  username: 'codesqu1_mini',
+      //  password: 'codesqu1_mini',
+      //  database: 'codesqu1_minis',*/
       //  host: '139.162.169.45',
       //   port: 3306,
       //  username: 'codesqu1_ministoriez',
       //   password: 'codesqu1_ministoriez',
       //   database: 'codesqu1_ministoriez',
-      entities: [User, Relation, Message, Histoire, Planche, Impression, Notification,Bloquer],
+      entities: [User, Relation, Message, Histoire, Planche, Impression, Notification, Bloquer, Signaler, Admin, Contact],
       synchronize: true,
       logging: true,
     }),
-
+    ContactsModule,
     UsersModule,
     RelationsModule,
     MessagesModule,
@@ -58,7 +63,9 @@ import { BloquersModule } from './bloquer/bloquers.module';
     ImpressionsModule,
     PlanchesModule,
     NotificationModule,
-    BloquersModule
+    BloquersModule,
+    SignalersModule,
+    AdminsModule
   ],
   providers: [AppService],
   controllers: [TelechargementController, AppController],

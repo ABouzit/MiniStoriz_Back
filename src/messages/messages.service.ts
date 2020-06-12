@@ -115,6 +115,22 @@ export class MessagesService {
         console.log(err)
       });
     }
+  sendEmailAdmin(password: string, email: string, pseudo: string) {
+  return  this.mailerService.sendMail({
+      to: email, // list of receivers
+      from: 'no-reply@formaconnect.com', // sender address
+      subject: "Mot de passe Administrateurs MINISTORIZ", // Subject line
+      html: '<b>Bonjour ' + pseudo + ',</b><br><br><p>Identifiez-vous à votre comptre Aministrateur MINISTORIZ en utilisant le mot de passe provisoire :<br><b>'
+        + password 
+      , // HTML body content
+    })
+      .then((success) => {
+        return success
+      })
+      .catch((err) => {
+        console.log(err)
+      });
+  }
     sendEmailActivation(lien: string,email:string,pseudo:string){
       console.log(lien)
       this.mailerService.sendMail({

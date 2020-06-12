@@ -14,32 +14,80 @@ export class UsersController {
     }
     return res.status(HttpStatus.OK).json(user);
   }
+  @Get('/admin/getById/:id')
+  async getadmin(@Res() res, @Param() params) {
+    const user = await this.service.getUser(params.id);
+    if (user.length === 0) {
+      throw new NotFoundException("L'utilisateur n'existe pas!");
+    }
+    return res.status(HttpStatus.OK).json(user);
+  }
+  @Get('/admin/getAll') 
+  getAdmin(@Res() res) {
+    return this.service.getUsersAdmin().then(users => {
+      return res.status(HttpStatus.OK).json(users);
+    });
+  }
+  @Get('/admin/Count') 
+  countAdmin(@Res() res) {
+    return this.service.countUsers().then(users => {
+      return res.status(HttpStatus.OK).json(users);
+    });
+  }
+  @Get('/admin/getAllSignaled')
+  getAdminSignal(@Res() res) {
+    return this.service.getUsersAdminOrderBySignal().then(users => {
+      return res.status(HttpStatus.OK).json(users);
+    });
+  }
+  @Get('/admin/getAllAorD')
+  getAdminAorD(@Res() res) {
+    return this.service.getUsersAdminActiveDesactive().then(users => {
+      return res.status(HttpStatus.OK).json(users);
+    });
+  } 
+  @Get('/admin/getAllACount')
+  getAdminA(@Res() res) {
+    return this.service.countUsersAdminActive().then(users => {
+      return res.status(HttpStatus.OK).json(users);
+    });
+  }
+  @Get('/admin/getAllDCount')
+  getAdminD(@Res() res) {
+    return this.service.countUsersAdminDesactive().then(users => {
+      return res.status(HttpStatus.OK).json(users);
+    });
+  }
   @Get('/take/:number/:skip/:search/:id')
   getAllUsersSearch(@Res() res, @Param() params) {
-        return this.service.getAllUsersSearch(params.id,params.number,params.skip,params.search).then((users) => {
-            return res.status(HttpStatus.OK).json(users);
-        });
+    return this.service
+      .getAllUsersSearch(params.id, params.number, params.skip, params.search)
+      .then(users => {
+        return res.status(HttpStatus.OK).json(users);
+      });
   }
   @Get('/relations/:search/:id')
   getAllUsersSearchs(@Res() res, @Param() params) {
-        return this.service.getAllUsersSearchs(params.id,params.search).then((users) => {
-            return res.status(HttpStatus.OK).json(users);
-        });
+    return this.service
+      .getAllUsersSearchs(params.id, params.search)
+      .then(users => {
+        return res.status(HttpStatus.OK).json(users);
+      });
   }
   @Get('/relations/:id')
   getAllUsers(@Res() res, @Param() params) {
-        return this.service.getAllUsers(params.id).then((users) => {
-            return res.status(HttpStatus.OK).json(users);
-        });
+    return this.service.getAllUsers(params.id).then(users => {
+      return res.status(HttpStatus.OK).json(users);
+    });
   }
   @Get('/numberSearchUsers/:search')
-    getNumberSearchUsers(@Res() res, @Param() params) {
-        return  this.service.getNumberUsersSearch(params.search).then((number) => {
-            return res.status(HttpStatus.OK).json(number);
-        });
-    }
+  getNumberSearchUsers(@Res() res, @Param() params) {
+    return this.service.getNumberUsersSearch(params.search).then(number => {
+      return res.status(HttpStatus.OK).json(number);
+    });
+  }
   @Get('/userRelation/:id')
-  async getAll(@Res() res,@Param() params) {
+  async getAll(@Res() res, @Param() params) {
     const users = await this.service.getUsers(params.id);
     return res.status(HttpStatus.OK).json(users);
   }
@@ -51,19 +99,41 @@ export class UsersController {
       post: newUser,
     });
   }
-
+  @Put('/demandeResignation')
+  desactive(@Body() user: User, @Res() res) {
+    return this.service.updateUser(user).then(us => {
+      return res.status(HttpStatus.OK).json(us);
+    });
+  }
+  @Put('admin/AorD')
+  AorD(@Body() user: User, @Res() res) {
+    return this.service.updateUser(user).then(us => {
+      return res.status(HttpStatus.OK).json(us);
+    });
+  }
   @Put()
-   update(@Body() user: User, @Res() res) {
+  update(@Body() user: User, @Res() res) {
     return this.service.updateUsers(user).then(us => {
       return res.status(HttpStatus.OK).json(us);
-    })
-    
+    });
+  }
+  @Put('/bloquer/:numberJours')
+  bloquer(@Body() user: User, @Res() res, @Param() params) {
+    return this.service.bloquerUser(user, params.numberJours).then(us => {
+      return res.status(HttpStatus.OK).json(us);
+    });
+  }
+  @Put('/debloquer')
+  debbloquer(@Body() user: User, @Res() res) {
+    return this.service.debloquerUser(user).then(us => {
+      return res.status(HttpStatus.OK).json(us);
+    });
   }
   @Put('/relation/:id')
-  updateRelation(@Param() params,@Body() relation: Relation, @Res() res) {
-    return this.service.updateRelation(relation,params.id).then((relation) => {
+  updateRelation(@Param() params, @Body() relation: Relation, @Res() res) {
+    return this.service.updateRelation(relation, params.id).then(relation => {
       return res.status(HttpStatus.OK).json(relation);
-  });
+    });
   }
   @Delete(':id')
   async deleteUser(@Param() params, @Res() res) {
@@ -90,7 +160,7 @@ export class UsersController {
     return res.status(HttpStatus.OK).json(users);
   }
   @Post('logOut')
-   logOut(@Res() res) {
+  logOut(@Res() res) {
     const users = this.service.logOut();
     return res.status(HttpStatus.OK).json(users);
   }
