@@ -86,9 +86,29 @@ export class ImpressionsService {
       order: { dateDeCreation: 'DESC' },
     });
   }
+  getPermitionImp(_id: string, _id2: string): Promise<any> {
+    let _permition = true;
+    return this.impressionsRepository
+      .find({
+        relations: ['histoire', 'user'],
+        select: ['commentaire', 'noteHistoire', 'noteDessin', 'user'],
+        where: [{ histoire: _id, user: _id2 }],
+      })
+      .then(result => {
+        if (result.length > 0) {
+          _permition = false;
+        }
+
+        return Promise.resolve({
+          permition: _permition,
+        });
+      });
+  }
   getHistoireNotes(_id: string): Promise<any> {
     let _noteMoyText = 0;
     let _noteMoyDessins = 0;
+    let _counter = 0;
+    let _counter2 = 0;
     return this.impressionsRepository
       .find({
         relations: ['histoire', 'user'],
@@ -97,14 +117,22 @@ export class ImpressionsService {
       })
       .then(result => {
         result.map((imp, index) => {
-          _noteMoyText += imp.noteHistoire;
-          _noteMoyDessins += imp.noteDessin;
+          if (imp.noteDessin > 0 || imp.noteHistoire > 0) {
+            _noteMoyDessins += imp.noteDessin;
+            _noteMoyText += imp.noteHistoire;
+            _counter += 1;
+          }
+          if (imp.noteDessin == 0 && imp.noteHistoire == 0) {
+            _counter2 += 1;
+          }
+            
         });
 
         return Promise.resolve({
           noteMoyText: _noteMoyText,
           noteMoyDessins: _noteMoyDessins,
-          index: result.length + 1,
+          index: _counter,
+          counter: _counter2
         });
       });
   }
@@ -114,11 +142,19 @@ export class ImpressionsService {
     let userText = new User();
     let userDessin = new User();
     return this.getHistoireNotes(impression.histoire.id).then(notes => {
-      histoire.noteDessinMoy =
-        (notes.noteMoyDessins + impression.noteDessin) / notes.index;
-      histoire.noteHistoireMoy =
-        (notes.noteMoyText + impression.noteHistoire) / notes.index;
-      histoire.nombreComment = notes.index;
+      console.log(notes)
+      console.log(impression.noteDessin)
+      console.log(impression.noteHistoire)
+      if (impression.noteDessin > 0 || impression.noteHistoire > 0) {
+        histoire.noteDessinMoy =
+          (notes.noteMoyDessins + impression.noteDessin) / (notes.index + 1);
+        histoire.noteHistoireMoy =
+          (notes.noteMoyText + impression.noteHistoire) / (notes.index + 1);
+          histoire.nombreComment = notes.counter;
+      } else {
+        histoire.nombreComment = notes.counter + 1;
+      }
+      
       return this.histoiresService.updateHistoire(histoire).then(() => {
         if (!impression.histoire.userText) {
           return this.histoiresService
@@ -153,7 +189,6 @@ export class ImpressionsService {
               });
             });
         } else if (!impression.histoire.userDessin) {
-          console.log(impression.histoire.userText);
           return this.histoiresService
             .rateTextByUser(impression.histoire.userText.id)
             .then(res => {

@@ -57,6 +57,12 @@ export class ImpressionsController {
       .getImpressionsHistoireByNumber(params.number, params.id)
       .then(impressions => res.status(HttpStatus.OK).json(impressions));
   }
+  @Get('permition/:id/:id2')
+  getPermitionImp(@Res() res, @Param() params) {
+    return this.service
+      .getPermitionImp(params.id, params.id2)
+      .then(impressions => res.status(HttpStatus.OK).json(impressions));
+  }
   @Post()
   create(@Body() impression: Impression, @Res() res) {
     return this.service.createImpression(impression).then(newImpression => {

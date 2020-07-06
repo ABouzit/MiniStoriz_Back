@@ -19,6 +19,13 @@ export class RelationsService {
       where: [{ id: _id }],
     });
   }
+  getRelationByUsers(_id: string,_id2: string): Promise<Relation[]> {
+    return this.relationsRepository.find({
+      relations: ['userOne', 'userTwo'],
+      select: ['userOne', 'userTwo', 'isActive', 'id'],
+      where: [{userOne: _id2, userTwo: _id }, {userOne: _id, userTwo: _id2 }],
+    });
+  }
   getRelationRequest(id: string): Promise<Relation[]> {
     return this.relationsRepository.find({
       relations: ['userOne', 'userTwo'],
@@ -50,6 +57,49 @@ export class RelationsService {
         { userOne: id2, userTwo: id },
       ],
     });
+  }
+  getRelationType(id: string, id2: string) {
+    let x = {ami: 0};
+    return this.relationsRepository.count({
+      where: [
+        { userOne: id, userTwo: id2 },
+        { userOne: id2, userTwo: id },
+      ],
+    }).then(res => {
+      if (res > 0) {
+        return this.getRelationIdAccepte(id,id2).then(resA => {
+          if (resA > 0) {
+            x.ami = 2;
+            console.log(x)
+            return Promise.resolve(x);
+          } else {
+            return this.getRelationEnv(id,id2).then(res1 => {
+              if (res1 > 0) {
+                x.ami = 1;
+                console.log(x)
+                return Promise.resolve(x);
+              } else {
+                x.ami = 3;
+                console.log(x)
+                return Promise.resolve(x);
+              }
+            })
+          }
+        })
+        
+      }else{
+        console.log(x)
+        return Promise.resolve(x);
+      }
+    })
+  }
+  getRelationEnv(id: string, id2: string) {
+        
+    return this.relationsRepository.count({where: [{userOne: id,userTwo: id2, isActive: false}]});
+  }
+  getRelationRec(id: string, id2: string) {
+      
+    return this.relationsRepository.count({where: [{userOne: id,userTwo: id2, isActive: false}]});
   }
   getRelationById(id: string, id2: string): Promise<Relation[]> {
     return this.relationsRepository.find({

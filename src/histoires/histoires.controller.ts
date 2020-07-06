@@ -114,6 +114,19 @@ export class HistoiresController {
         return res.status(HttpStatus.OK).json(histoires);
       });
   }
+  @Get('/illustrer/take/:number/:skip/:filtre/:search')
+  getNumberHistoire(@Res() res, @Param() params) {
+    return this.service
+      .getNumberOfHistoiresText(
+        params.number,
+        params.skip,
+        params.filtre,
+        params.search,
+      )
+      .then(histoires => {
+        return res.status(HttpStatus.OK).json(histoires);
+      });
+  }
   @Get('/takeByUser/:number/:skip/:filtre/:search/:id')
   getNumberByUser(@Res() res, @Param() params) {
     return this.service
@@ -168,6 +181,12 @@ export class HistoiresController {
       return res.status(HttpStatus.OK).json(number);
     });
   }
+  @Get('/illustrer/numberHistoires')
+  getNumberHistoiresIllustrer(@Res() res) {
+    return this.service.numberHistoireIllistrer().then(number => {
+      return res.status(HttpStatus.OK).json(number);
+    });
+  }
   @Get('/numberHistoiresById/:id')
   getNumberHistoiresById(@Res() res, @Param() params) {
     return this.service.numberHistoireByUser(params.id).then(number => {
@@ -194,6 +213,12 @@ export class HistoiresController {
   }
   @Get('/numberHistoiresSearch/:search')
   getNumberHistoiresSearch(@Res() res, @Param() params) {
+    return this.service.numberHistoireSearch(params.search).then(number => {
+      return res.status(HttpStatus.OK).json(number);
+    });
+  }
+  @Get('/illustrer/numberHistoiresSearch/:search')
+  getNumberHistoiresSearchIllustrer(@Res() res, @Param() params) {
     return this.service.numberHistoireSearch(params.search).then(number => {
       return res.status(HttpStatus.OK).json(number);
     });

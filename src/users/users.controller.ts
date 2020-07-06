@@ -66,6 +66,14 @@ export class UsersController {
         return res.status(HttpStatus.OK).json(users);
       });
   }
+  @Get('/DispoLogin/:email')
+  getCheckLogin(@Res() res, @Param() params) {
+    return this.service
+      .getDispoLogin(params.email)
+      .then(users => {
+        return res.status(HttpStatus.OK).json(users);
+      });
+  }
   @Get('/relations/:search/:id')
   getAllUsersSearchs(@Res() res, @Param() params) {
     return this.service
@@ -135,6 +143,18 @@ export class UsersController {
       return res.status(HttpStatus.OK).json(relation);
     });
   }
+  @Put('/accRelation/:id/:id2')
+  updateRelation2(@Param() params, @Body() relation: Relation, @Res() res) {
+    return this.service.updateRelation2(params.id, params.id2).then(relation => {
+      return res.status(HttpStatus.OK).json(relation);
+    });
+  }
+  @Delete('/deleteRelation/:id/:id2')
+  deleteRelation(@Param() params, @Body() relation: Relation, @Res() res) {
+    return this.service.deleteRelation(params.id, params.id2).then(relation => {
+      return res.status(HttpStatus.OK).json(relation);
+    });
+  }
   @Delete(':id')
   async deleteUser(@Param() params, @Res() res) {
     const deletedUsed = await this.service.deleteUser(params.id);
@@ -148,6 +168,13 @@ export class UsersController {
   async signUp(@Body() user: User, @Res() res) {
     const users = await this.service.signUp(user);
     return res.status(HttpStatus.OK).json(users);
+  }
+  @Post('signUpMethode')
+  signUpMethode(@Body() user: any, @Res() res) {
+    return this.service.signUpMethode(user).then(ress => {
+      return res.status(HttpStatus.OK).json(ress);
+    })
+    
   }
   @Post('signIn')
   async signIn(@Body() user: User, @Res() res) {

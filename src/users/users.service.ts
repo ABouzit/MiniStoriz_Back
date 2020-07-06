@@ -101,17 +101,39 @@ export class UsersService {
         .then(users => {
           return Promise.all(
             users.map((user, index) => {
-              const x = { user, ami: false };
+              const x = { user, ami: 0 };
               return this.relationsService
-                .getRelationId(id, user.id)
+                .getRelationEnv(id, user.id)
                 .then(res => {
                   if (res === 0) {
-                    x.ami = false;
+                    return this.relationsService
+                      .getRelationIdAccepte(id, user.id)
+                      .then(res => {
+                        if (res > 0) {
+                          x.ami = 2;
+                        }
+                        return this.relationsService
+                          .getRelationRec(user.id,id )
+                          .then(res => {
+                            if (res > 0) {
+                              x.ami = 3;
+                            }
+                            object.push(x);
+                          });
+                      });
                   } else {
-                    x.ami = true;
+                    x.ami = 1;
+                    return this.relationsService
+                      .getRelationRec(user.id,id )
+                      .then(res => {
+                        if (res > 0) {
+                          x.ami = 3;
+                        }
+                        object.push(x);
+                      });
                   }
-                  object.push(x);
                 });
+                
             }),
           ).then(() => {
             return Promise.resolve(object);
@@ -205,6 +227,7 @@ export class UsersService {
     return this.usersRepository
       .find({ where: { isActive: true }, order: { nombreHistoire: 'DESC' } })
       .then(users => {
+        console.log(users)
         return Promise.all(
           users.map((user, index) => {
             if (user.id === id) {
@@ -262,11 +285,19 @@ export class UsersService {
       where: [{ email: _email }],
     });
   }
-  createUser(user: User): Promise<User> {
-    const us = this.usersRepository.save(user).catch(function(error) {
-      throw new HttpException(error, HttpStatus.FORBIDDEN);
+  getDispoLogin(_email: string): Promise<any> {
+    return this.usersRepository.find({
+      select: ['methode'],
+      where:
+      {
+        email: _email
+      },
     });
-    return us;
+  }
+  createUser(user: User): Promise<User> {
+    return this.usersRepository.save(user).catch(function(error) {
+      throw new HttpException(error, HttpStatus.FORBIDDEN);
+    });;
   }
   updateUser(user: User): Promise<User> {
     console.log(user);
@@ -307,20 +338,24 @@ export class UsersService {
           us2 = result[0];
           us1 = result[0];
           const password = us1.motDePasse;
-          us1.motDePasse = user.motDePasse;
-          return _this.updateUser(us1).then(function(result1) {
-            us2.motDePasse = password;
-            console.log(result1);
-            return _this.firebaseService
-              .changePasswordWithFirebase(us2, user.motDePasse)
-              .then(res => {
-                console.log(res);
-                return res;
-              })
-              .catch(function(error) {
-                console.log(error);
-                return 'errorUpdatePasswordFB';
+          user.id = us1.id;
+          return _this.updateUser(user).then(function(result1) {
+            if (user.motDePasse == "wp7DqWU=" || user.motDePasse == null) {
+              return result1;
+            } else {
+              us2.motDePasse = password;
+              console.log(result1);
+              return _this.firebaseService
+                .changePasswordWithFirebase(us2, user.motDePasse)
+                .then(res => {
+                  console.log(res);
+                  return res;
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  return 'errorUpdatePasswordFB';
               });
+            }
           });
         }
       })
@@ -351,6 +386,15 @@ export class UsersService {
     return this.getUser(user).then(res => {
       const userText = res[0];
       userText.nombreReseau += 1;
+      return this.usersRepository.save(userText).catch(function(error) {
+        throw new HttpException(error, HttpStatus.FORBIDDEN);
+      });
+    });
+  }
+  updateNombreReseau2(user: string): Promise<User> {
+    return this.getUser(user).then(res => {
+      const userText = res[0];
+      userText.nombreReseau -= 1;
       return this.usersRepository.save(userText).catch(function(error) {
         throw new HttpException(error, HttpStatus.FORBIDDEN);
       });
@@ -387,6 +431,53 @@ export class UsersService {
         });
       } else {
         return this.relationsService.updateRelation(relation);
+      }
+    });
+  }
+  updateRelation2(id: string, id2: string) {
+    return this.relationsService.getRelationByUsers(id, id2).then(relat => {console.log(relat)
+      let rel = relat[0];
+      
+      const userOne = rel.userOne;
+      const userTwo = rel.userTwo;
+      rel.isActive = true;
+        return this.updateNombreReseau(userOne.id).then(ress => {
+          return this.updateNombreReseau(userTwo.id).then(rss => {
+            return this.relationsService.updateRelation(rel).then(res => {
+              const notification = new Notification();
+              if (userOne.id === id) {
+                notification.lienDessin = userOne.lienPhoto;
+                notification.pseudo = userOne.pseudo;
+                notification.text = ' a accepté votre demande.';
+                notification.user = userTwo.id;
+                notification.lien = '/LesOeuvres/' + userOne.id;
+              } else {
+                notification.lienDessin = userTwo.lienPhoto;
+                notification.pseudo = userTwo.pseudo;
+                notification.text = ' a accepté votre demande.';
+                notification.user = userOne.id;
+                notification.lien = '/LesOeuvres/' + userTwo.id;
+              }
+              return this.notificationService.createNotification(notification);
+            });
+          });
+        });
+    });
+  }
+  deleteRelation(id: string, id2: string) {
+    return this.relationsService.getRelationByUsers(id, id2).then(relat => {console.log(relat)
+      let rel = relat[0];
+      
+      const userOne = rel.userOne;
+      const userTwo = rel.userTwo;
+      if (rel.isActive == true) {
+        return this.updateNombreReseau2(userOne.id).then(ress => {
+          return this.updateNombreReseau2(userTwo.id).then(rss => {
+            return this.relationsService.deleteRelationById(id,id2)
+          });
+        });
+      } else {
+        return this.relationsService.deleteRelationById(id,id2)
       }
     });
   }
@@ -506,6 +597,41 @@ export class UsersService {
               });
           });
 
+      }
+    });
+  }
+  signUpMethode(user: any) {
+    const _this = this;
+    let us1 = new User();
+    let userInfo = new UserInfo();
+    us1.email = user.email;
+    us1.lienPhoto = user.lienPhoto;
+    us1.pseudo = user.pseudo;
+    us1.prenom = user.prenom;
+    us1.nom = user.nom;
+    us1.isActive = true;
+    us1.methode = user.methode;
+    userInfo.pseudo = user.pseudo;
+    userInfo.lienPhoto = user.lienPhoto;
+    userInfo.token = user.token;
+    return this.getUserByEmail(user.email).then(function(result) {
+      if (result.length < 1) {
+        us1.dateDeCreation = new Date();
+        us1.dateDernierConnexion = new Date();
+        us1.ville = 'aucune';
+        return _this.createUser(us1)
+          .then(resUser => {
+            console.log(us1)
+            userInfo.message = 'utilisateur cree avec succes';
+            userInfo.id = resUser.id;
+            return userInfo
+          })
+      } else {
+        userInfo.id = result[0].id;
+        userInfo.lienPhoto = result[0].lienPhoto;
+        userInfo.pseudo = result[0].pseudo;
+        us1.dateDernierConnexion = new Date();
+        return userInfo;
       }
     });
   }

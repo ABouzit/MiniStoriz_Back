@@ -18,7 +18,7 @@ export class User {
   email: string;
   @Column({ length: 25, nullable: true })
   ville: string;
-  @Column({ length: 25 })
+  @Column({ length: 25, nullable: true })
   motDePasse: string;
   @Column({ type: 'int', nullable: true, default: 0 })
   nombreReseau: number;
@@ -34,6 +34,8 @@ export class User {
   isActive: boolean;
   @Column({ length: 255, default: 'USER' })
   role: role;
+  @Column({ length: 30, nullable: true, default: 'EMAIL' })
+  methode: string;
   @Column({ type: 'timestamp', nullable: true })
   dateDeCreation: Date;
   @Column({ type: 'timestamp', nullable: true })

@@ -36,6 +36,13 @@ export class RelationsController {
       return res.status(HttpStatus.OK).json(relations);
     });
   }
+  @Get('/getRelationType/:id/:id2')
+  getRelationType(@Res() res, @Param() params) {
+    return this.service.getRelationType(params.id, params.id2).then(relation => {
+      console.log("hadi "+relation )
+      return res.status(HttpStatus.OK).json(relation);
+    });
+  }
   @Get('/getRelationId/:id/:id2')
   getRelationId(@Res() res, @Param() params) {
     return this.service.getRelationId(params.id, params.id2).then(relation => {

@@ -7,6 +7,8 @@ import { PlanchesService } from 'src/planches/planches.service';
 import { ImpressionsService } from 'src/impressions/impressions.service';
 import { Notification } from 'src/notification/notification.entity';
 import { NotificationService } from 'src/notification/notification.service';
+import { IsNull } from "typeorm";
+import { User } from 'src/users/user.entity';
 @Injectable()
 export class HistoiresService {
   constructor(
@@ -489,6 +491,94 @@ export class HistoiresService {
       }
     }
   }
+  getNumberOfHistoiresText(
+    number: number,
+    nbr: number,
+    filtre: number,
+    search: string,
+  ): Promise<Histoire[]> {
+    if (filtre == 1) {
+      if (search == 'xxxx') {
+        return this.histoiresRepository.find({
+          relations: ['userText', 'userDessin'],
+          where: [{ userDessin: IsNull(), etatHistoire: 'VALIDE' }],
+          skip: nbr,
+          take: number,
+          order: { nombreVue: 'DESC' },
+        });
+      } else {
+        return this.histoiresRepository.find({
+          relations: ['userText', 'userDessin'],
+          where: [
+            { titreHistoire: Like('%' + search + '%'), userDessin: IsNull(), etatHistoire: 'VALIDE' },
+          ],
+          skip: nbr,
+          take: number,
+          order: { nombreVue: 'DESC' },
+        });
+      }
+    } else if (filtre == 2) {
+      if (search == 'xxxx') {
+        return this.histoiresRepository.find({
+          relations: ['userText', 'userDessin'],
+          where: [{ userDessin: IsNull(), etatHistoire: 'VALIDE' }],
+          skip: nbr,
+          take: number,
+          order: { noteHistoireMoy: 'DESC', noteDessinMoy: 'DESC' },
+        });
+      } else {
+        return this.histoiresRepository.find({
+          relations: ['userText', 'userDessin'],
+          where: [
+            { titreHistoire: Like('%' + search + '%'), userDessin: IsNull(), etatHistoire: 'VALIDE' },
+          ],
+          skip: nbr,
+          take: number,
+          order: { noteHistoireMoy: 'DESC', noteDessinMoy: 'DESC' },
+        });
+      }
+    } else if (filtre == 3) {
+      if (search == 'xxxx') {
+        return this.histoiresRepository.find({
+          relations: ['userText', 'userDessin'],
+          where: [{ userDessin: IsNull(), etatHistoire: 'VALIDE' }],
+          skip: nbr,
+          take: number,
+          order: { dateDeCreation: 'DESC' },
+        });
+      } else {
+        return this.histoiresRepository.find({
+          relations: ['userText', 'userDessin'],
+          where: [
+            { titreHistoire: Like('%' + search + '%'), userDessin: IsNull(), etatHistoire: 'VALIDE' },
+          ],
+          skip: nbr,
+          take: number,
+          order: { dateDeCreation: 'DESC' },
+        });
+      }
+    } else if (filtre == 4) {
+      if (search == 'xxxx') {
+        return this.histoiresRepository.find({
+          relations: ['userText', 'userDessin'],
+          where: [{ userDessin: IsNull(), etatHistoire: 'VALIDE' }],
+          skip: nbr,
+          take: number,
+          order: { dateDeCreation: 'ASC' },
+        });
+      } else {
+        return this.histoiresRepository.find({
+          relations: ['userText', 'userDessin'],
+          where: [
+            { titreHistoire: Like('%' + search + '%'), userDessin: IsNull(), etatHistoire: 'VALIDE' },
+          ],
+          skip: nbr,
+          take: number,
+          order: { dateDeCreation: 'ASC' },
+        });
+      }
+    }
+  }
   getNumberOfHistoiresUsers(
     number: number,
     nbr: number,
@@ -622,7 +712,7 @@ export class HistoiresService {
                         console.log(notification);
                         console.log(histoire)
                         return Promise.resolve(histoire);
-                      });
+                    });
                   } else {
                     const notification = new Notification();
                     notification.lienDessin = userDessin.lienPhoto;
@@ -657,7 +747,85 @@ export class HistoiresService {
     }
   }
   updateHistoire(histoire: Histoire): Promise<Histoire> {
-    histoire.dateDeCreation = new Date();
+    console.log(histoire)
+    const etat = histoire.etatHistoire;
+    console.log(etat)
+    let userText = new User();
+    let userDessin = new User();
+    userText = histoire.userText;
+    userDessin = histoire.userDessin;
+    if (etat == 'ACCEPTER_ILLUSTRATION') {
+      const notification = new Notification();
+      notification.lienDessin = userDessin.lienPhoto;
+      notification.pseudo = userDessin.pseudo;
+      notification.text =
+        "a accepté vos illustrations pour l'histoire :" +
+        histoire.titreHistoire +
+        '.';
+      notification.user = userText.id;
+      notification.lien = '/Histoire/' + histoire.id;
+      return this.notificationService
+        .createNotification(notification)
+        .then(result => {
+          histoire.etatHistoire = 'EN_ATTANTE'
+          return this.histoiresRepository.save(histoire).then(res => {
+            return Promise.resolve(histoire);
+          })
+      });
+    } else if(etat == 'REFUSER_ILLUSTRATION') {
+      return this.planchesService.getPlancheByHistoire(histoire.id).then(planches => {
+        return Promise.all(
+           planches.map((planche, index) => {
+            if (planche.text == "") {
+              console.log('ok')
+              return  this.planchesService.deletePlanche(planche);
+            } else {
+              planche.lienDessin = null;
+              return  this.planchesService.updatePlanche(planche);
+            }
+            
+          }),
+        ).then(() => {
+          const notification = new Notification();
+          notification.lienDessin = userText.lienPhoto;
+          notification.pseudo = userText.pseudo;
+          notification.text =
+            "a refusé vos illustrations pour l'histoire :" +
+            histoire.titreHistoire +
+            '.';
+          notification.user = userDessin.id;
+          notification.lien = '/Histoire/' + histoire.id;
+          return this.notificationService
+            .createNotification(notification)
+            .then(result => {
+              histoire.etatHistoire = 'VALIDE';
+              histoire.userDessin = null;
+              return this.histoiresRepository.save(histoire).then(res => {
+                return Promise.resolve(histoire);
+            })
+          });
+        });
+      });
+    } else if(etat == 'EN_ATTANTE_USER') {
+      const notification = new Notification();
+      notification.lienDessin = userDessin.lienPhoto;
+      notification.pseudo = userDessin.pseudo;
+      notification.text =
+        "Vous a proposé des illustrations pour votre histoire :" +
+        histoire.titreHistoire +
+        '.';
+      notification.user = userText.id;
+      notification.lien = '/Histoire/' + histoire.id;
+      return this.notificationService
+        .createNotification(notification)
+        .then(result => {
+          console.log(notification);
+          console.log(histoire)
+          return this.histoiresRepository.save(histoire).then(res => {
+            return Promise.resolve(histoire);
+          })
+      });
+    }
     return this.histoiresRepository.save(histoire);
   }
   updateHistoireWithNotif(histoire: Histoire,idDessin,idText,url): Promise<Histoire> {
@@ -770,9 +938,13 @@ export class HistoiresService {
       });
     });
   }
-
+  
   numberHistoire() {
     return this.histoiresRepository.count({ etatHistoire: 'VALIDE' });
+  }
+
+  numberHistoireIllistrer() {
+    return this.histoiresRepository.count({ relations: ['userText', 'userDessin'], where: [{ userDessin: IsNull(), etatHistoire: 'VALIDE' }] });
   }
 
   numberHistoireByUser(id: string) {
@@ -793,7 +965,14 @@ export class HistoiresService {
       etatHistoire: 'VALIDE',
     });
   }
+  numberHistoireSearchIllustrer(search: string) {
+    return this.histoiresRepository.count({
+      relations: ['userText', 'userDessin'],
+      where: [{userDessin: IsNull(), titreHistoire: Like('%' + search + '%'),
+      etatHistoire: 'VALIDE'}],
 
+    });
+  }
   numberHistoireSearchByUser(search: string, id: string) {
     return this.histoiresRepository.count({
       relations: ['userText', 'userDessin'],
