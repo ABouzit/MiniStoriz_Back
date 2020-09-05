@@ -8,16 +8,16 @@ import { MailerModule, HandlebarsAdapter } from '@nestjs-modules/mailer';
     imports: [TypeOrmModule.forFeature([Message]),
                 MailerModule.forRoot({
                     transport: {
-                    host: 'ssl0.ovh.net',
+                    host: 'smtp.gmail.com',
                     port: 465,
                     secure: true, // upgrade later with STARTTLS
                     auth: {
-                        user: "no-reply@formaconnect.com",
-                        pass: "Azerzerzer1993",
+                        user: "noreplay.Ministoriz@gmail.com",
+                        pass: "ministoriz@dmin",
                     },
                     },
                     defaults: {
-                    from:'"Ministoriz" <no-reply@formaconnect.com>',
+                    from:'"Ministoriz" <noreplay.Ministoriz@gmail.com>',
                     },
                     template: {
                     dir: process.cwd() + '/templates/',

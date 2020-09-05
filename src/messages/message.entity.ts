@@ -15,6 +15,8 @@ export class Message {
     vue: boolean;
     @Column({ length: 200, nullable: true })
     lienPhoto: string;
+    @Column({  nullable: true, default: 'ALL' })
+    etatMessage: string;
     @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
     dateDeCreation: Date;
 }

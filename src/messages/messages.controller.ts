@@ -27,6 +27,12 @@ export class MessagesController {
                     return res.status(HttpStatus.OK).json(messages);
             })
     }
+    @Get('/delete/between/:id1/:id2')
+    getdelete(@Res() res,@Param() params) {
+        return this.service.deleteAllMessage(params.id1,params.id2).then(messages=>{
+                    return res.status(HttpStatus.OK).json(messages);
+            })
+    }
     @Get('/users/:id1')
     getUserMessage(@Res() res,@Param() params) {
         return this.service.getUserMessage(params.id1).then(messages=>{

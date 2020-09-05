@@ -747,7 +747,6 @@ export class HistoiresService {
     }
   }
   updateHistoire(histoire: Histoire): Promise<Histoire> {
-    console.log(histoire)
     const etat = histoire.etatHistoire;
     console.log(etat)
     let userText = new User();
@@ -755,35 +754,82 @@ export class HistoiresService {
     userText = histoire.userText;
     userDessin = histoire.userDessin;
     if (etat == 'ACCEPTER_ILLUSTRATION') {
-      const notification = new Notification();
-      notification.lienDessin = userDessin.lienPhoto;
-      notification.pseudo = userDessin.pseudo;
-      notification.text =
-        "a accepté vos illustrations pour l'histoire :" +
-        histoire.titreHistoire +
-        '.';
-      notification.user = userText.id;
-      notification.lien = '/Histoire/' + histoire.id;
-      return this.notificationService
-        .createNotification(notification)
-        .then(result => {
-          histoire.etatHistoire = 'EN_ATTANTE'
-          return this.histoiresRepository.save(histoire).then(res => {
-            return Promise.resolve(histoire);
-          })
-      });
+      this.histoiresRepository.find({
+        relations: ['userDessin'],
+        where: [
+          { originalHistoire: histoire.originalHistoire }
+        ],
+      }).then(propositions => {
+        return Promise.all(
+          propositions.map(proposition =>{
+          if (histoire.id != proposition.id) {
+          const notification = new Notification();
+          userDessin = proposition.userDessin;
+          notification.lienDessin = userText.lienPhoto;
+          notification.pseudo = userText.pseudo;
+          notification.text =
+            "a déjà choisi des illustrations pour l'histoire :" +
+            histoire.titreHistoire +
+            '.';
+          notification.user = userDessin.id;
+          notification.lien = '/Histoire/' + histoire.originalHistoire;
+          return this.notificationService
+            .createNotification(notification)
+            .then(result => {
+              return this.planchesService.deletePlancheByHistoire(proposition).then(res =>{
+                return this.histoiresRepository.delete(proposition).then(res => {
+                  return Promise.resolve(histoire);
+                })
+              })
+          });
+        } else {
+          const notification = new Notification();
+          userDessin = proposition.userDessin;
+          notification.lienDessin = userText.lienPhoto;
+          notification.pseudo = userText.pseudo;
+          notification.text =
+            "a accepté vos illustrations pour l'histoire :" +
+            histoire.titreHistoire +
+            '.';
+          notification.user = userDessin.id;
+          notification.lien = '/Histoire/' + histoire.originalHistoire;
+          return this.notificationService
+            .createNotification(notification)
+            .then(result => {
+              
+              // histoire.id = histoire.originalHistoire;
+              // histoire.originalHistoire = "";
+              return this.histoiresRepository.find({relations: ['userText', 'userDessin'],
+              where: [
+                { id: histoire.originalHistoire }
+              ],}).then(original => {
+                let orig = new Histoire();
+                orig = original[0];
+                orig.etatHistoire = 'EN_ATTANTE';
+                orig.userDessin = histoire.userDessin;
+                return this.planchesService.deletePlancheByHistoire(original[0]).then(res =>{
+                  return this.histoiresRepository.save(orig).then(ress => {
+                  return this.planchesService.updatePlancheByHistoire(histoire, orig).then(resss => {
+                    return this.histoiresRepository.delete(histoire).then(ress => {
+                      return Promise.resolve(orig);
+                    }) 
+                    })
+                  })
+                })
+              })
+              
+          });
+        }
+        })
+        )
+      })
+      
     } else if(etat == 'REFUSER_ILLUSTRATION') {
+      console.log(histoire)
       return this.planchesService.getPlancheByHistoire(histoire.id).then(planches => {
         return Promise.all(
            planches.map((planche, index) => {
-            if (planche.text == "") {
-              console.log('ok')
               return  this.planchesService.deletePlanche(planche);
-            } else {
-              planche.lienDessin = null;
-              return  this.planchesService.updatePlanche(planche);
-            }
-            
           }),
         ).then(() => {
           const notification = new Notification();
@@ -794,19 +840,25 @@ export class HistoiresService {
             histoire.titreHistoire +
             '.';
           notification.user = userDessin.id;
-          notification.lien = '/Histoire/' + histoire.id;
+          notification.lien = '/Histoire/' + histoire.originalHistoire;
           return this.notificationService
             .createNotification(notification)
             .then(result => {
-              histoire.etatHistoire = 'VALIDE';
-              histoire.userDessin = null;
-              return this.histoiresRepository.save(histoire).then(res => {
+              console.log(histoire)
+              return this.histoiresRepository.delete(histoire.id).then(res => {
                 return Promise.resolve(histoire);
             })
           });
         });
       });
     } else if(etat == 'EN_ATTANTE_USER') {
+      if (histoire.id == "") {
+
+        let hiss = new Histoire();
+        histoire.id = hiss.id;
+
+      }
+      return this.histoiresRepository.save(histoire).then(res => {
       const notification = new Notification();
       notification.lienDessin = userDessin.lienPhoto;
       notification.pseudo = userDessin.pseudo;
@@ -815,13 +867,13 @@ export class HistoiresService {
         histoire.titreHistoire +
         '.';
       notification.user = userText.id;
-      notification.lien = '/Histoire/' + histoire.id;
+      notification.lien = '/Histoire/' + res.id;
       return this.notificationService
         .createNotification(notification)
         .then(result => {
           console.log(notification);
           console.log(histoire)
-          return this.histoiresRepository.save(histoire).then(res => {
+          
             return Promise.resolve(histoire);
           })
       });

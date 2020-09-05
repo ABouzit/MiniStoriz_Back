@@ -26,6 +26,8 @@ export class Histoire {
   nombreComment: number;
   @Column({ length: 30, nullable: true })
   titreHistoire: string;
+  @Column({ nullable: true })
+  originalHistoire: string;
   @Column({ length: 200, nullable: true })
   lienIllustration: string;
   @Column({ type: 'timestamp', nullable: true })

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Planche } from './planche.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Histoire } from 'src/histoires/histoire.entity';
 
 @Injectable()
 export class PlanchesService {
@@ -64,5 +65,26 @@ export class PlanchesService {
 
     deletePlanche(planche: Planche) {
         return this.planchesRepository.delete(planche);
+    }
+    deletePlancheByHistoire(histoire: Histoire) {
+        return this.planchesRepository.find({histoire: histoire}).then(planches=>{
+            return Promise.all(
+                planches.map(planche => {
+                    return this.planchesRepository.delete(planche);
+                })
+            )
+        })
+    }
+    updatePlancheByHistoire(histoire: Histoire, histoire2: Histoire) {
+        return this.planchesRepository.find({histoire: histoire}).then(planches=>{
+            return Promise.all(
+                planches.map(planche => {
+                    let pl = new Planche();
+                    pl = planche;
+                    pl.histoire = histoire2;
+                    return this.planchesRepository.save(pl);
+                })
+            )
+        })
     }
 }

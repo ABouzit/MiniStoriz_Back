@@ -614,6 +614,7 @@ export class UsersService {
     userInfo.pseudo = user.pseudo;
     userInfo.lienPhoto = user.lienPhoto;
     userInfo.token = user.token;
+    userInfo.email = user.email;
     return this.getUserByEmail(user.email).then(function(result) {
       if (result.length < 1) {
         us1.dateDeCreation = new Date();

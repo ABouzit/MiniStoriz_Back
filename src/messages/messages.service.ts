@@ -17,10 +17,25 @@ export class MessagesService {
     getMessage(id1: string,id2: string,skip: number, take: number): Promise<Message[]> {
         return this.messagesRepository.find({
             relations: ['userTwo'],
-            where: [{ userOne: id1, userTwo: id2 },{ userOne: id2, userTwo: id1 }],
+            where: [{ userOne: id1, userTwo: id2, etatMessage: id1 },{ userOne: id2, userTwo: id1, etatMessage: id1 },
+              { userOne: id1, userTwo: id2, etatMessage: 'ALL' },{ userOne: id2, userTwo: id1, etatMessage: 'ALL' }],
             skip: skip, take: take,
             order: { dateDeCreation: 'DESC' }
         });
+    }
+    deleteAllMessage(id1: string,id2: string): any {
+      const idSupp = id2;
+      console.log("id2 = "+idSupp)
+      return this.messagesRepository.find({
+          where: [{ userOne: id1, userTwo: id2 },{ userOne: id2, userTwo: id1 }]
+      }).then(messages => {
+        return Promise.all(messages.map((message,index)=>{
+             message.etatMessage = idSupp;
+             return this.updateMessage(message);
+        })).then(()=>{
+          return true; 
+        })
+      })
     }
     getNbrMessage(id1: string,id2: string) {
       return this.messagesRepository.count({
@@ -88,7 +103,7 @@ export class MessagesService {
     sendEmail(name: string,objet:string,email:string,message:string){
         this.mailerService.sendMail({
         to: email, // list of receivers
-        from: 'no-reply@formaconnect.com', // sender address
+        from: 'noreplay.Ministoriz@gmail.com', // sender address
         subject: objet, // Subject line
         html: '<b>Bonjour '+name+',</b><br><p>'+message+'</p>', // HTML body content
       })
@@ -102,7 +117,7 @@ export class MessagesService {
     sendEmailUpdatePassword(password: string,email:string,pseudo:string){
         this.mailerService.sendMail({
         to: email, // list of receivers
-        from: 'no-reply@formaconnect.com', // sender address
+        from: 'noreplay.Ministoriz@gmail.com', // sender address
         subject: "réinitialisation de votre mot de passe MINISTORIZ", // Subject line
         html: '<b>Bonjour '+pseudo+',</b><br><br><p>Identifiez-vous à votre comptre MINISTORIZ en utilisant le mot de passe provisoire :<br><b>'
         +password+
@@ -118,7 +133,7 @@ export class MessagesService {
   sendEmailAdmin(password: string, email: string, pseudo: string) {
   return  this.mailerService.sendMail({
       to: email, // list of receivers
-      from: 'no-reply@formaconnect.com', // sender address
+      from: 'noreplay.Ministoriz@gmail.com', // sender address
       subject: "Mot de passe Administrateurs MINISTORIZ", // Subject line
       html: '<b>Bonjour ' + pseudo + ',</b><br><br><p>Identifiez-vous à votre comptre Aministrateur MINISTORIZ en utilisant le mot de passe provisoire :<br><b>'
         + password 
@@ -135,10 +150,10 @@ export class MessagesService {
       console.log(lien)
       this.mailerService.sendMail({
       to: email, // list of receivers
-      from: 'no-reply@formaconnect.com', // sender address
+      from: 'noreplay.Ministoriz@gmail.com', // sender address
       subject: "activation de votre compte MINISTORIZ", // Subject line
       html: '<b>Bonjour '+pseudo+',</b><br><br><p>Pour activer votre compte, veuillez cliquer sur le lien ci-dessous :<br><b><a href="http://'+lien+
-      '">http://'+lien+
+      '">https://'+lien+
       '</a></b><br><br>Ceci est un mail automatique, Merci de ne pas y répondre. </p>', // HTML body content
     })
     .then((success) => {
