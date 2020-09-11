@@ -8,6 +8,7 @@ import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
 import { NotificationService } from 'src/notification/notification.service';
 import { Notification } from 'src/notification/notification.entity';
+import { Histoire } from 'src/histoires/histoire.entity';
 
 @Injectable()
 export class ImpressionsService {
@@ -116,24 +117,30 @@ export class ImpressionsService {
         where: [{ histoire: _id }],
       })
       .then(result => {
-        result.map((imp, index) => {
+        if (result.length > 0) {result.map((imp, index) => {
           if (imp.noteDessin > 0 || imp.noteHistoire > 0) {
             _noteMoyDessins += imp.noteDessin;
             _noteMoyText += imp.noteHistoire;
             _counter += 1;
           }
-          if (imp.noteDessin == 0 && imp.noteHistoire == 0) {
+          if (imp.noteDessin === 0 && imp.noteHistoire === 0) {
             _counter2 += 1;
           }
-            
+
         });
 
-        return Promise.resolve({
+                               return Promise.resolve({
           noteMoyText: _noteMoyText,
           noteMoyDessins: _noteMoyDessins,
           index: _counter,
-          counter: _counter2
-        });
+          counter: _counter2,
+        }); } else { return Promise.resolve({
+               noteMoyText: 0,
+               noteMoyDessins: 0,
+               index: 0,
+               counter: 0,
+             });
+        }
       });
   }
   createImpression(imp: Impression): Promise<any> {
@@ -142,19 +149,18 @@ export class ImpressionsService {
     let userText = new User();
     let userDessin = new User();
     return this.getHistoireNotes(impression.histoire.id).then(notes => {
-      console.log(notes)
-      console.log(impression.noteDessin)
-      console.log(impression.noteHistoire)
+      console.log(notes);
+      console.log(impression.noteDessin);
+      console.log(impression.noteHistoire);
       if (impression.noteDessin > 0 || impression.noteHistoire > 0) {
         histoire.noteDessinMoy =
           (notes.noteMoyDessins + impression.noteDessin) / (notes.index + 1);
         histoire.noteHistoireMoy =
           (notes.noteMoyText + impression.noteHistoire) / (notes.index + 1);
-          histoire.nombreComment = notes.counter;
+        histoire.nombreComment = notes.counter;
       } else {
         histoire.nombreComment = notes.counter + 1;
       }
-      
       return this.histoiresService.updateHistoire(histoire).then(() => {
         if (!impression.histoire.userText) {
           return this.histoiresService
@@ -351,31 +357,137 @@ export class ImpressionsService {
   deleteImpressionWithRatings(id: string) {
     return this.getImpression(id).then(res => {
       const histoire = res[0].histoire;
+      let impression = res[0];
+      let userDessin = new User();
+      let userText = new User();
       return this.impressionsRepository.delete(id).then(del => {
         return this.getHistoireNotes(histoire.id).then(notes => {
-          histoire.noteDessinMoy = notes.noteMoyDessins / notes.index;
-          histoire.noteHistoireMoy = notes.noteMoyText / notes.index;
-          histoire.nombreComment = notes.index - 1;
+         if (notes.noteMoyDessins === 0 && notes.index === 0) {histoire.noteDessinMoy = 0; }
+          else { histoire.noteDessinMoy = notes.noteMoyDessins / notes.index; }
+         if (notes.noteMoyText === 0 && notes.index === 0) {
+            histoire.noteHistoireMoy = 0;
+          } else {
+            histoire.noteHistoireMoy = notes.noteMoyText / notes.index;
+          }
+         if (notes.index === 0) {histoire.nombreComment = 0; } else {histoire.nombreComment = notes.index - 1; }
+         console.log(histoire);
 
+        }).then(() => {
           return this.histoiresService.updateHistoire(histoire).then(() => {
-            Promise.resolve('Comment deleted');
+        if (!impression.histoire.userText) {
+          return this.histoiresService
+            .rateDessinByUser(impression.histoire.userDessin.id)
+            .then(res => {
+              // res.data.noteHistoireMoy
+              userDessin = impression.histoire.userDessin;
+              if (res.noteHistoireMoy > 0) {
+                userDessin.noteHistoire = res.noteHistoireMoy;
+              } else {
+                userDessin.noteHistoire = 0;
+              }
+              return this.usersService.updateUser(userDessin).then(us2 => {
+               
+              });
+            });
+        } else if (!impression.histoire.userDessin) {
+          return this.histoiresService
+            .rateTextByUser(impression.histoire.userText.id)
+            .then(res => {
+              // res.data.noteHistoireMoy
+              userText = impression.histoire.userText;
+              if (res.noteHistoireMoy > 0) {
+                userText.noteHistoire = res.noteHistoireMoy;
+              } else {
+                userText.noteHistoire = 0;
+              }
+              return this.usersService.updateUser(userText).then(us2 => {
+              });
+            });
+        } else if (
+          impression.histoire.userDessin.id === impression.histoire.userText.id
+        ) {
+          return this.histoiresService
+            .rateDessinByUser(impression.histoire.userDessin.id)
+            .then(res => {
+              // res.data.noteHistoireMoy
+
+              userDessin = impression.histoire.userDessin;
+              if (res.noteDessinMoy > 0) {
+                userDessin.noteDessin = res.noteDessinMoy;
+              } else {
+                userDessin.noteDessin = 0;
+              }
+
+              return this.usersService.updateUser(userDessin).then(us1 => {
+                return this.histoiresService
+                  .rateTextByUser(us1.id)
+                  .then(res => {
+                    // res.data.noteHistoireMoy
+                    userText = us1;
+                    if (res.noteHistoireMoy > 0) {
+                      userText.noteHistoire = res.noteHistoireMoy;
+                    } else {
+                      userText.noteHistoire = 0;
+                    }
+                    return this.usersService.updateUser(userText).then(us2 => {
+                    });
+                  });
+              });
+            });
+        } else {
+          return this.histoiresService
+            .rateDessinByUser(impression.histoire.userDessin.id)
+            .then(res => {
+              // res.data.noteHistoireMoy
+
+              userDessin = impression.histoire.userDessin;
+              if (res.noteDessinMoy > 0) {
+                userDessin.noteDessin = res.noteDessinMoy;
+              } else {
+                userDessin.noteDessin = 0;
+              }
+
+              return this.usersService.updateUser(userDessin).then(us1 => {
+                return this.histoiresService
+                  .rateTextByUser(impression.histoire.userText.id)
+                  .then(res => {
+                    // res.data.noteHistoireMoy
+                    userText = impression.histoire.userText;
+                    if (res.noteHistoireMoy > 0) {
+                      userText.noteHistoire = res.noteHistoireMoy;
+                    } else {
+                      userText.noteHistoire = 0;
+                    }
+
+                    return this.usersService.updateUser(userText).then(us2 => {
+                    });
+                  });
+              });
+            });
+        }
+      });
+           
           });
         });
       });
-    });
   }
   deleteImpression(id: string) {
     return this.impressionsRepository.delete(id);
   }
   deleteHistoire(id: string) {
+    return this.histoiresService.getHistoire(id).then((hist) => {
     return this.getImpressionsHistoire(id).then(impressions => {
       return Promise.all(
         impressions.map((impression, index) => {
          return this.deleteImpression(impression.id);
         }),
       ).then(() => {
-        return this.histoiresService.deleteHistoire(id);
+        return this.histoiresService.deleteHistoire(id).then(() => {
+          if (hist[0].userText) {return this.usersService.updateNombreHistoireDelete(hist[0].userText.id); }
+          if (hist[0].userDessin) { return this.usersService.updateNombreDessinDelete(hist[0].userDessin.id); }
+        });
       });
     });
+  });
   }
 }

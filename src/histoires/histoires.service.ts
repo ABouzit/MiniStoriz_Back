@@ -676,7 +676,7 @@ export class HistoiresService {
       }
     }
   }
-  getHistoire(_id: number): Promise<Histoire[]> {
+  getHistoire(_id: string): Promise<Histoire[]> {
     return this.histoiresRepository.find({
       relations: ['userText', 'userDessin'],
       where: [{ id: _id }],

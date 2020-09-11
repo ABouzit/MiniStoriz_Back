@@ -1,6 +1,7 @@
 import { Controller, Get, Res, Param, NotFoundException, HttpStatus, Post, Body, Put, Delete } from '@nestjs/common';
 import { ImpressionsService } from './impressions.service';
 import { Impression } from './impression.entity';
+import { Histoire } from 'src/histoires/histoire.entity';
 
 @Controller('impressions')
 export class ImpressionsController {
@@ -102,6 +103,7 @@ export class ImpressionsController {
   }
   @Delete('/histoire/:id')
   deleteHistoire(@Param() params, @Res() res) {
+    
     return this.service.deleteHistoire(params.id).then(imp => {
       return res.status(HttpStatus.OK).json(imp);
     });

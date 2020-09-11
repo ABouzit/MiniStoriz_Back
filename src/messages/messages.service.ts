@@ -140,9 +140,10 @@ export class MessagesService {
       , // HTML body content
     })
       .then((success) => {
-        return success
+        return Promise.resolve(success)
       })
       .catch((err) => {
+        console.log("hnn")
         console.log(err)
       });
   }

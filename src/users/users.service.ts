@@ -373,11 +373,29 @@ export class UsersService {
       });
     });
   }
+  updateNombreHistoireDelete(user: string): Promise<User> {
+    return this.getUser(user).then(res => {
+      const userText = res[0];
+      userText.nombreHistoire -= 1;
+      return this.usersRepository.save(userText).catch(function (error) {
+        throw new HttpException(error, HttpStatus.FORBIDDEN);
+      });
+    });
+  }
   updateNombreDessin(user: string): Promise<User> {
     return this.getUser(user).then(res => {
       const userText = res[0];
       userText.nombreDessin += 1;
       return this.usersRepository.save(userText).catch(function(error) {
+        throw new HttpException(error, HttpStatus.FORBIDDEN);
+      });
+    });
+  }
+  updateNombreDessinDelete(user: string): Promise<User> {
+    return this.getUser(user).then(res => {
+      const userText = res[0];
+      userText.nombreDessin -= 1;
+      return this.usersRepository.save(userText).catch(function (error) {
         throw new HttpException(error, HttpStatus.FORBIDDEN);
       });
     });
