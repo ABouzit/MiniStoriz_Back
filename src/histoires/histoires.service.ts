@@ -877,6 +877,14 @@ export class HistoiresService {
             return Promise.resolve(histoire);
           })
       });
+    } else if(etat == 'EN_ATTANTE_UPDATE') {
+      if (histoire.id == "") {
+
+        let hiss = new Histoire();
+        histoire.id = hiss.id;
+
+      }
+      return this.histoiresRepository.save(histoire)
     }
     return this.histoiresRepository.save(histoire);
   }
