@@ -31,7 +31,8 @@ export class HistoiresController {
     return this.service.countHistoiresWithStat(params.etat).then(histoires => {
       return res.status(HttpStatus.OK).json(histoires);
     });
-  } @Get('admin/count')
+  }
+  @Get('admin/count')
   Count(@Res() res, @Param() params) {
     return this.service.countHistoires().then(histoires => {
       return res.status(HttpStatus.OK).json(histoires);
@@ -279,20 +280,45 @@ export class HistoiresController {
       });
     });
   }
-  @Put("admin/:idDessin/:idText")
-  updateWithNotif(@Body() histoire: Histoire, @Res() res, @Req() req, @Param() params) {
-    let url=req.protocol + '://' + req.get('host');
-    return this.service.updateHistoireWithNotif(histoire, params.idDessin, params.idText, url).then(result => {
-      return res.status(HttpStatus.OK).json({
-        message: "L'histoire a ete mis a jour avec succes!",
-        id: result.id,
+  @Put('admin/:idDessin/:idText')
+  updateWithNotif(
+    @Body() histoire: Histoire,
+    @Res() res,
+    @Req() req,
+    @Param() params,
+  ) {
+    let url = req.protocol + '://' + req.get('host');
+    return this.service
+      .updateHistoireWithNotif(histoire, params.idDessin, params.idText, url)
+      .then(result => {
+        return res.status(HttpStatus.OK).json({
+          message: "L'histoire a ete mis a jour avec succes!",
+          id: result.id,
+        });
       });
-    });
   }
   @Delete(':id')
   deleteUser(@Param() params, @Res() res) {
     return this.service.deleteHistoire(params.id).then(histoire => {
       return res.status(HttpStatus.OK).json(histoire);
+    });
+  }
+  @Put('admin/updateValide')
+  updateStory(@Body() histoire: Histoire, @Res() res) {
+    return this.service.updateStory(histoire).then(result => {
+      return res.status(HttpStatus.OK).json({
+        message: "L'histoire a ete mis a jour avec succes!",
+        id: result,
+      });
+    });
+  }
+  @Delete('admin/updateNotValid/:id')
+  deleteStory(@Param() params, @Res() res) {
+    return this.service.deleteStory(params.id).then(result => {
+      return res.status(HttpStatus.OK).json({
+        message: "L'histoire a ete supprimer!",
+        id: result,
+      });
     });
   }
 }

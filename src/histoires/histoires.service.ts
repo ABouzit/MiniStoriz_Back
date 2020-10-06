@@ -7,8 +7,9 @@ import { PlanchesService } from 'src/planches/planches.service';
 import { ImpressionsService } from 'src/impressions/impressions.service';
 import { Notification } from 'src/notification/notification.entity';
 import { NotificationService } from 'src/notification/notification.service';
-import { IsNull } from "typeorm";
+import { IsNull } from 'typeorm';
 import { User } from 'src/users/user.entity';
+import { Planche } from 'src/planches/planche.entity';
 @Injectable()
 export class HistoiresService {
   constructor(
@@ -118,16 +119,13 @@ export class HistoiresService {
       order: { dateDeCreation: 'ASC' },
     });
   }
-    getUserHistoires(id){
+  getUserHistoires(id) {
     return this.histoiresRepository.find({
-          relations: ['userText', 'userDessin'],
-          where: [
-            { userText: id},
-            { userDessin: id},
-          ],
-          order: { dateDeCreation: 'DESC' }
-        });
-}
+      relations: ['userText', 'userDessin'],
+      where: [{ userText: id }, { userDessin: id }],
+      order: { dateDeCreation: 'DESC' },
+    });
+  }
   getNumberOfHistoiresSearchByMe(
     number: number,
     nbr: number,
@@ -139,10 +137,7 @@ export class HistoiresService {
       if (search == 'xxxx') {
         return this.histoiresRepository.find({
           relations: ['userText', 'userDessin'],
-          where: [
-            { userText: id},
-            { userDessin: id },
-          ],
+          where: [{ userText: id }, { userDessin: id }],
           skip: nbr,
           take: number,
           order: { nombreVue: 'DESC' },
@@ -154,7 +149,6 @@ export class HistoiresService {
             {
               userText: id,
               titreHistoire: Like('%' + search + '%'),
-              
             },
             {
               userDessin: id,
@@ -170,10 +164,7 @@ export class HistoiresService {
       if (search == 'xxxx') {
         return this.histoiresRepository.find({
           relations: ['userText', 'userDessin'],
-          where: [
-            {  userText: id },
-            {  userDessin: id },
-          ],
+          where: [{ userText: id }, { userDessin: id }],
           skip: nbr,
           take: number,
           order: { noteHistoireMoy: 'DESC', noteDessinMoy: 'DESC' },
@@ -185,11 +176,10 @@ export class HistoiresService {
             {
               userText: id,
               titreHistoire: Like('%' + search + '%'),
-             
             },
             {
               userDessin: id,
-             
+
               titreHistoire: Like('%' + search + '%'),
             },
           ],
@@ -202,10 +192,7 @@ export class HistoiresService {
       if (search == 'xxxx') {
         return this.histoiresRepository.find({
           relations: ['userText', 'userDessin'],
-          where: [
-            { userText: id,  },
-            { userDessin: id, },
-          ],
+          where: [{ userText: id }, { userDessin: id }],
           skip: nbr,
           take: number,
           order: { dateDeCreation: 'DESC' },
@@ -217,12 +204,10 @@ export class HistoiresService {
             {
               userText: id,
               titreHistoire: Like('%' + search + '%'),
-              
             },
             {
               userDessin: id,
               titreHistoire: Like('%' + search + '%'),
-              
             },
           ],
           skip: nbr,
@@ -234,10 +219,7 @@ export class HistoiresService {
       if (search == 'xxxx') {
         return this.histoiresRepository.find({
           relations: ['userText', 'userDessin'],
-          where: [
-            { userText: id },
-            { userDessin: id},
-          ],
+          where: [{ userText: id }, { userDessin: id }],
           skip: nbr,
           take: number,
           order: { dateDeCreation: 'ASC' },
@@ -249,12 +231,10 @@ export class HistoiresService {
             {
               userText: id,
               titreHistoire: Like('%' + search + '%'),
-              
             },
             {
               userDessin: id,
               titreHistoire: Like('%' + search + '%'),
-              
             },
           ],
           skip: nbr,
@@ -510,7 +490,11 @@ export class HistoiresService {
         return this.histoiresRepository.find({
           relations: ['userText', 'userDessin'],
           where: [
-            { titreHistoire: Like('%' + search + '%'), userDessin: IsNull(), etatHistoire: 'VALIDE' },
+            {
+              titreHistoire: Like('%' + search + '%'),
+              userDessin: IsNull(),
+              etatHistoire: 'VALIDE',
+            },
           ],
           skip: nbr,
           take: number,
@@ -530,7 +514,11 @@ export class HistoiresService {
         return this.histoiresRepository.find({
           relations: ['userText', 'userDessin'],
           where: [
-            { titreHistoire: Like('%' + search + '%'), userDessin: IsNull(), etatHistoire: 'VALIDE' },
+            {
+              titreHistoire: Like('%' + search + '%'),
+              userDessin: IsNull(),
+              etatHistoire: 'VALIDE',
+            },
           ],
           skip: nbr,
           take: number,
@@ -550,7 +538,11 @@ export class HistoiresService {
         return this.histoiresRepository.find({
           relations: ['userText', 'userDessin'],
           where: [
-            { titreHistoire: Like('%' + search + '%'), userDessin: IsNull(), etatHistoire: 'VALIDE' },
+            {
+              titreHistoire: Like('%' + search + '%'),
+              userDessin: IsNull(),
+              etatHistoire: 'VALIDE',
+            },
           ],
           skip: nbr,
           take: number,
@@ -570,7 +562,11 @@ export class HistoiresService {
         return this.histoiresRepository.find({
           relations: ['userText', 'userDessin'],
           where: [
-            { titreHistoire: Like('%' + search + '%'), userDessin: IsNull(), etatHistoire: 'VALIDE' },
+            {
+              titreHistoire: Like('%' + search + '%'),
+              userDessin: IsNull(),
+              etatHistoire: 'VALIDE',
+            },
           ],
           skip: nbr,
           take: number,
@@ -701,7 +697,7 @@ export class HistoiresService {
                     notification.lienDessin = userText.lienPhoto;
                     notification.pseudo = userText.pseudo;
                     notification.text =
-                      "Vous a inviter a cree avec lui l'histoire :" +
+                      'Vous a inviter a cree avec lui l\'histoire :' +
                       histoire.titreHistoire +
                       '.';
                     notification.user = userDessin.id;
@@ -710,15 +706,15 @@ export class HistoiresService {
                       .createNotification(notification)
                       .then(result => {
                         console.log(notification);
-                        console.log(histoire)
+                        console.log(histoire);
                         return Promise.resolve(histoire);
-                    });
+                      });
                   } else {
                     const notification = new Notification();
                     notification.lienDessin = userDessin.lienPhoto;
                     notification.pseudo = userDessin.pseudo;
                     notification.text =
-                      "Vous a inviter a cree avec lui l'histoire :" +
+                      'Vous a inviter a cree avec lui l\'histoire :' +
                       histoire.titreHistoire +
                       '.';
                     notification.user = userText.id;
@@ -727,7 +723,7 @@ export class HistoiresService {
                       .createNotification(notification)
                       .then(result => {
                         console.log(notification);
-                        console.log(histoire)
+                        console.log(histoire);
                         return Promise.resolve(histoire);
                       });
                   }
@@ -748,237 +744,261 @@ export class HistoiresService {
   }
   updateHistoire(histoire: Histoire): Promise<Histoire> {
     const etat = histoire.etatHistoire;
-    console.log(etat)
+    console.log(etat);
     let userText = new User();
     let userDessin = new User();
     userText = histoire.userText;
     userDessin = histoire.userDessin;
     if (etat == 'ACCEPTER_ILLUSTRATION') {
-      this.histoiresRepository.find({
-        relations: ['userDessin'],
-        where: [
-          { originalHistoire: histoire.originalHistoire }
-        ],
-      }).then(propositions => {
-        return Promise.all(
-          propositions.map(proposition =>{
-          if (histoire.id != proposition.id) {
-          const notification = new Notification();
-          userDessin = proposition.userDessin;
-          notification.lienDessin = userText.lienPhoto;
-          notification.pseudo = userText.pseudo;
-          notification.text =
-            "a déjà choisi des illustrations pour l'histoire :" +
-            histoire.titreHistoire +
-            '.';
-          notification.user = userDessin.id;
-          notification.lien = '/Histoire/' + histoire.originalHistoire;
-          return this.notificationService
-            .createNotification(notification)
-            .then(result => {
-              return this.planchesService.deletePlancheByHistoire(proposition).then(res =>{
-                return this.histoiresRepository.delete(proposition).then(res => {
-                  return Promise.resolve(histoire);
-                })
-              })
-          });
-        } else {
-          const notification = new Notification();
-          userDessin = proposition.userDessin;
-          notification.lienDessin = userText.lienPhoto;
-          notification.pseudo = userText.pseudo;
-          notification.text =
-            "a accepté vos illustrations pour l'histoire :" +
-            histoire.titreHistoire +
-            '.';
-          notification.user = userDessin.id;
-          notification.lien = '/Histoire/' + histoire.originalHistoire;
-          return this.notificationService
-            .createNotification(notification)
-            .then(result => {
-              
-              // histoire.id = histoire.originalHistoire;
-              // histoire.originalHistoire = "";
-              return this.histoiresRepository.find({relations: ['userText', 'userDessin'],
-              where: [
-                { id: histoire.originalHistoire }
-              ],}).then(original => {
-                let orig = new Histoire();
-                orig = original[0];
-                orig.etatHistoire = 'EN_ATTANTE';
-                orig.userDessin = histoire.userDessin;
-                return this.planchesService.deletePlancheByHistoire(original[0]).then(res =>{
-                  return this.histoiresRepository.save(orig).then(ress => {
-                  return this.planchesService.updatePlancheByHistoire(histoire, orig).then(resss => {
-                    return this.histoiresRepository.delete(histoire).then(ress => {
-                      return Promise.resolve(orig);
-                    }) 
-                    })
-                  })
-                })
-              })
-              
-          });
-        }
+      this.histoiresRepository
+        .find({
+          relations: ['userDessin'],
+          where: [{ originalHistoire: histoire.originalHistoire }],
         })
-        )
-      })
-      
-    } else if(etat == 'REFUSER_ILLUSTRATION') {
-      console.log(histoire)
-      return this.planchesService.getPlancheByHistoire(histoire.id).then(planches => {
-        return Promise.all(
-           planches.map((planche, index) => {
-              return  this.planchesService.deletePlanche(planche);
-          }),
-        ).then(() => {
-          const notification = new Notification();
-          notification.lienDessin = userText.lienPhoto;
-          notification.pseudo = userText.pseudo;
-          notification.text =
-            "a refusé vos illustrations pour l'histoire :" +
-            histoire.titreHistoire +
-            '.';
-          notification.user = userDessin.id;
-          notification.lien = '/Histoire/' + histoire.originalHistoire;
-          return this.notificationService
-            .createNotification(notification)
-            .then(result => {
-              console.log(histoire)
-              return this.histoiresRepository.delete(histoire.id).then(res => {
-                return Promise.resolve(histoire);
-            })
+        .then(propositions => {
+          return Promise.all(
+            propositions.map(proposition => {
+              if (histoire.id != proposition.id) {
+                const notification = new Notification();
+                userDessin = proposition.userDessin;
+                notification.lienDessin = userText.lienPhoto;
+                notification.pseudo = userText.pseudo;
+                notification.text =
+                  'a déjà choisi des illustrations pour l\'histoire :' +
+                  histoire.titreHistoire +
+                  '.';
+                notification.user = userDessin.id;
+                notification.lien = '/Histoire/' + histoire.originalHistoire;
+                return this.notificationService
+                  .createNotification(notification)
+                  .then(result => {
+                    return this.planchesService
+                      .deletePlancheByHistoire(proposition)
+                      .then(res => {
+                        return this.histoiresRepository
+                          .delete(proposition)
+                          .then(res => {
+                            return Promise.resolve(histoire);
+                          });
+                      });
+                  });
+              } else {
+                const notification = new Notification();
+                userDessin = proposition.userDessin;
+                notification.lienDessin = userText.lienPhoto;
+                notification.pseudo = userText.pseudo;
+                notification.text =
+                  'a accepté vos illustrations pour l\'histoire :' +
+                  histoire.titreHistoire +
+                  '.';
+                notification.user = userDessin.id;
+                notification.lien = '/Histoire/' + histoire.originalHistoire;
+                return this.notificationService
+                  .createNotification(notification)
+                  .then(result => {
+                    // histoire.id = histoire.originalHistoire;
+                    // histoire.originalHistoire = "";
+                    return this.histoiresRepository
+                      .find({
+                        relations: ['userText', 'userDessin'],
+                        where: [{ id: histoire.originalHistoire }],
+                      })
+                      .then(original => {
+                        let orig = new Histoire();
+                        orig = original[0];
+                        orig.etatHistoire = 'EN_ATTANTE';
+                        orig.userDessin = histoire.userDessin;
+                        return this.planchesService
+                          .deletePlancheByHistoire(original[0])
+                          .then(res => {
+                            return this.histoiresRepository
+                              .save(orig)
+                              .then(ress => {
+                                return this.planchesService
+                                  .updatePlancheByHistoire(histoire, orig)
+                                  .then(resss => {
+                                    return this.histoiresRepository
+                                      .delete(histoire)
+                                      .then(ress => {
+                                        return Promise.resolve(orig);
+                                      });
+                                  });
+                              });
+                          });
+                      });
+                  });
+              }
+            }),
+          );
+        });
+    } else if (etat == 'REFUSER_ILLUSTRATION') {
+      console.log(histoire);
+      return this.planchesService
+        .getPlancheByHistoire(histoire.id)
+        .then(planches => {
+          return Promise.all(
+            planches.map((planche, index) => {
+              return this.planchesService.deletePlanche(planche);
+            }),
+          ).then(() => {
+            const notification = new Notification();
+            notification.lienDessin = userText.lienPhoto;
+            notification.pseudo = userText.pseudo;
+            notification.text =
+              'a refusé vos illustrations pour l\'histoire :' +
+              histoire.titreHistoire +
+              '.';
+            notification.user = userDessin.id;
+            notification.lien = '/Histoire/' + histoire.originalHistoire;
+            return this.notificationService
+              .createNotification(notification)
+              .then(result => {
+                console.log(histoire);
+                return this.histoiresRepository
+                  .delete(histoire.id)
+                  .then(res => {
+                    return Promise.resolve(histoire);
+                  });
+              });
           });
         });
-      });
-    } else if(etat == 'EN_ATTANTE_USER') {
-      if (histoire.id == "") {
-
-        let hiss = new Histoire();
+    } else if (etat == 'EN_ATTANTE_USER') {
+      if (histoire.id == '') {
+        const hiss = new Histoire();
         histoire.id = hiss.id;
-
       }
       return this.histoiresRepository.save(histoire).then(res => {
-      const notification = new Notification();
-      notification.lienDessin = userDessin.lienPhoto;
-      notification.pseudo = userDessin.pseudo;
-      notification.text =
-        "Vous a proposé des illustrations pour votre histoire :" +
-        histoire.titreHistoire +
-        '.';
-      notification.user = userText.id;
-      notification.lien = '/Histoire/' + res.id;
-      return this.notificationService
-        .createNotification(notification)
-        .then(result => {
-          console.log(notification);
-          console.log(histoire)
-          
+        const notification = new Notification();
+        notification.lienDessin = userDessin.lienPhoto;
+        notification.pseudo = userDessin.pseudo;
+        notification.text =
+          'Vous a proposé des illustrations pour votre histoire :' +
+          histoire.titreHistoire +
+          '.';
+        notification.user = userText.id;
+        notification.lien = '/Histoire/' + res.id;
+        return this.notificationService
+          .createNotification(notification)
+          .then(result => {
+            console.log(notification);
+            console.log(histoire);
+
             return Promise.resolve(histoire);
-          })
+          });
       });
-    } else if(etat == 'EN_ATTANTE_UPDATE') {
-      if (histoire.id == "") {
-
-        let hiss = new Histoire();
+    } else if (etat == 'EN_ATTANTE_UPDATE') {
+      if (histoire.id == '') {
+        const hiss = new Histoire();
         histoire.id = hiss.id;
-
       }
-      return this.histoiresRepository.save(histoire)
+      return this.histoiresRepository.save(histoire);
     }
     return this.histoiresRepository.save(histoire);
   }
-  updateHistoireWithNotif(histoire: Histoire,idDessin,idText,url): Promise<Histoire> {
-    let idD=idDessin;
-    let idT=idText;
+  updateHistoireWithNotif(
+    histoire: Histoire,
+    idDessin,
+    idText,
+    url,
+  ): Promise<Histoire> {
+    const idD = idDessin;
+    const idT = idText;
     histoire.dateDeCreation = new Date();
-    return this.histoiresRepository.save(histoire).then(()=>{
-      if((idD==="null"||idT==="null")||
-      idD==idT){
-        if(idD==="null"){
+    return this.histoiresRepository.save(histoire).then(() => {
+      if (idD === 'null' || idT === 'null' || idD == idT) {
+        if (idD === 'null') {
           const notification = new Notification();
-          notification.lienDessin =url+"/images/asset/logo.png";
-          notification.pseudo = "Administrateur";
+          notification.lienDessin = url + '/images/asset/logo.png';
+          notification.pseudo = 'Administrateur';
           notification.text =
-            "Votre histoire " +
+            'Votre histoire ' +
             histoire.titreHistoire +
-          ' a été ' + histoire.etatHistoire+".";
+            ' a été ' +
+            histoire.etatHistoire +
+            '.';
           notification.user = idT;
           notification.lien = '/Histoire/' + histoire.id;
           return this.notificationService
             .createNotification(notification)
             .then(result => {
               console.log(notification);
-              console.log(histoire)
+              console.log(histoire);
               return Promise.resolve(histoire);
             });
         }
-        if(idT==="null"){
+        if (idT === 'null') {
           const notification = new Notification();
-          notification.lienDessin = url + "/images/asset/logo.png";
-          notification.pseudo = "Administrateur";
+          notification.lienDessin = url + '/images/asset/logo.png';
+          notification.pseudo = 'Administrateur';
           notification.text =
-            "Votre histoire " +
+            'Votre histoire ' +
             histoire.titreHistoire +
-            ' a été ' + histoire.etatHistoire + ".";
+            ' a été ' +
+            histoire.etatHistoire +
+            '.';
           notification.user = idD;
           notification.lien = '/Histoire/' + histoire.id;
           return this.notificationService
             .createNotification(notification)
             .then(result => {
               console.log(notification);
-              console.log(histoire)
+              console.log(histoire);
               return Promise.resolve(histoire);
             });
         }
-        if(idD===idT){
+        if (idD === idT) {
           const notification = new Notification();
-          notification.lienDessin = url + "/images/asset/logo.png";
-          notification.pseudo = "Administrateur";
+          notification.lienDessin = url + '/images/asset/logo.png';
+          notification.pseudo = 'Administrateur';
           notification.text =
-            "Votre histoire " +
+            'Votre histoire ' +
             histoire.titreHistoire +
-            ' a été ' + histoire.etatHistoire + ".";
+            ' a été ' +
+            histoire.etatHistoire +
+            '.';
           notification.user = idD;
           notification.lien = '/Histoire/' + histoire.id;
           return this.notificationService
             .createNotification(notification)
             .then(result => {
               console.log(notification);
-              console.log(histoire)
+              console.log(histoire);
               return Promise.resolve(histoire);
             });
         }
-      }
-      else{
+      } else {
         const notification = new Notification();
         const notification2 = new Notification();
-        notification.lienDessin = url+ "/images/asset/logo.png";
-        notification.pseudo = "Administrateur";
+        notification.lienDessin = url + '/images/asset/logo.png';
+        notification.pseudo = 'Administrateur';
         notification.text =
-          "Votre histoire " +
+          'Votre histoire ' +
           histoire.titreHistoire +
-           ' a été ' + histoire.etatHistoire + ".";
+          ' a été ' +
+          histoire.etatHistoire +
+          '.';
         notification.user = idD;
         notification.lien = '/Histoire/' + histoire.id;
-        notification.lienDessin = url + "/images/asset/logo.png";
-        notification2.pseudo = "Administrateur";
+        notification.lienDessin = url + '/images/asset/logo.png';
+        notification2.pseudo = 'Administrateur';
         notification2.text =
-          "Votre histoire " +
+          'Votre histoire ' +
           histoire.titreHistoire +
-          ' a été ' + histoire.etatHistoire + ".";
+          ' a été ' +
+          histoire.etatHistoire +
+          '.';
         notification2.user = idT;
         notification2.lien = '/Histoire/' + histoire.id;
         return this.notificationService
           .createNotification(notification)
           .then(result => {
             console.log(notification);
-            console.log(histoire)
+            console.log(histoire);
             return this.notificationService
               .createNotification(notification2)
               .then(result => {
                 console.log(notification2);
-                console.log(histoire)
+                console.log(histoire);
                 return Promise.resolve(histoire);
               });
           });
@@ -991,26 +1011,32 @@ export class HistoiresService {
     return this.planchesService.getPlancheByHistoire(id).then(planches => {
       return Promise.all(
         planches.map((planche, index) => {
-        return  this.planchesService.deletePlanche(planche);
+          return this.planchesService.deletePlanche(planche);
         }),
       ).then(() => {
         return this.histoiresRepository.delete(histoire);
       });
     });
   }
-  
+
   numberHistoire() {
     return this.histoiresRepository.count({ etatHistoire: 'VALIDE' });
   }
 
   numberHistoireIllistrer() {
-    return this.histoiresRepository.count({ relations: ['userText', 'userDessin'], where: [{ userDessin: IsNull(), etatHistoire: 'VALIDE' }] });
+    return this.histoiresRepository.count({
+      relations: ['userText', 'userDessin'],
+      where: [{ userDessin: IsNull(), etatHistoire: 'VALIDE' }],
+    });
   }
 
   numberHistoireByUser(id: string) {
     return this.histoiresRepository.count({
       relations: ['userText', 'userDessin'],
-      where: [{ userText: id, etatHistoire: 'VALIDE' }, { userDessin: id, etatHistoire: 'VALIDE' }],
+      where: [
+        { userText: id, etatHistoire: 'VALIDE' },
+        { userDessin: id, etatHistoire: 'VALIDE' },
+      ],
     });
   }
   numberHistoireByMe(id: string) {
@@ -1028,9 +1054,13 @@ export class HistoiresService {
   numberHistoireSearchIllustrer(search: string) {
     return this.histoiresRepository.count({
       relations: ['userText', 'userDessin'],
-      where: [{userDessin: IsNull(), titreHistoire: Like('%' + search + '%'),
-      etatHistoire: 'VALIDE'}],
-
+      where: [
+        {
+          userDessin: IsNull(),
+          titreHistoire: Like('%' + search + '%'),
+          etatHistoire: 'VALIDE',
+        },
+      ],
     });
   }
   numberHistoireSearchByUser(search: string, id: string) {
@@ -1057,7 +1087,8 @@ export class HistoiresService {
         {
           userText: id,
           titreHistoire: Like('%' + search + '%'),
-        },{
+        },
+        {
           userDessin: id,
           titreHistoire: Like('%' + search + '%'),
         },
@@ -1068,7 +1099,10 @@ export class HistoiresService {
     return this.usersService.getUsersSearch(search).then(result => {
       return this.histoiresRepository.count({
         relations: ['userText', 'userDessin'],
-        where: [{ userText: In(result), etatHistoire: 'VALIDE' }, { userDessin: In(result), etatHistoire: 'VALIDE' }],
+        where: [
+          { userText: In(result), etatHistoire: 'VALIDE' },
+          { userDessin: In(result), etatHistoire: 'VALIDE' },
+        ],
       });
     });
   }
@@ -1132,4 +1166,30 @@ export class HistoiresService {
         });
       });
   }
+  updateStory(histoire: Histoire) {
+   return this.planchesService.getPlancheByHistoire(histoire.id).then(newPlanches => {
+     return this.planchesService.getPlancheByHistoire(histoire.originalHistoire).then(oldPlanches => {
+        return Promise.all(newPlanches.map((planche, index) => {
+        let pl = new Planche();
+        pl.index=planche.index;
+        pl.isActive=planche.isActive;
+        pl.lienDessin=planche.lienDessin;
+        pl.text=planche.text;
+       pl.id = oldPlanches[index].id;
+       pl.histoire = oldPlanches[index].histoire;
+       return this.planchesService.createPlanche(pl).then((res) => {
+        return this.planchesService.deletePlanche(planche);
+       });
+           })).then(() => {return this.histoiresRepository.delete(histoire)});
+     });
+   });
+  }
+  deleteStory(id: string) {
+ return this.planchesService.getPlancheByHistoire(id).then(newPlanches => {
+   
+       return Promise.all(newPlanches.map((planche, index) => {
+           return this.planchesService.deletePlanche(planche);
+       })).then(() =>{return this.histoiresRepository.delete({id:id})});
+     });
+    }
 }

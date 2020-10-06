@@ -25,7 +25,6 @@ export class PlanchesService {
     getPlancheByHistoire(_id: string): Promise<Planche[]> {
         return this.planchesRepository.find({
             relations: ['histoire'],
-            select: ['index', 'lienDessin', 'text'],
             where: [{ histoire: _id }],
             order: {index: "ASC"}
         });
@@ -46,6 +45,7 @@ export class PlanchesService {
           });
     }
     createPlanche(planche: Planche) {
+
         return this.planchesRepository.save(planche);
     }
     updatePlanche(planche: Planche): Promise<any> {
