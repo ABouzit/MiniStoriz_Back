@@ -24,11 +24,11 @@ export class Histoire {
   nombreVue: number;
   @Column({ type: 'int', default: 0, nullable: true })
   nombreComment: number;
-  @Column({ length: 30, nullable: true })
+  @Column({ length: 45, nullable: true })
   titreHistoire: string;
   @Column({ nullable: true })
   originalHistoire: string;
-  @Column({ length: 200, nullable: true })
+  @Column({ length: 400, nullable: true })
   lienIllustration: string;
   @Column({ type: 'timestamp', nullable: true })
   dateDeCreation: Date;

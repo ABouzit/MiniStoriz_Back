@@ -3,7 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from './message.entity';
 import { MessagesService } from './messages.service';
 import { MessagesController } from './messages.controller';
-import { MailerModule, HandlebarsAdapter } from '@nestjs-modules/mailer';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 @Module({
     imports: [TypeOrmModule.forFeature([Message]),
                 MailerModule.forRoot({
